@@ -3,288 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protocollo Attivo</title>
+    <title>System Failure</title>
     <style>
-        /* --- IMPOSTAZIONI BASE --- */
         body {
-            background-color: #000;
-            color: #fff;
+            margin: 0;
+            padding: 0;
+            background-color: #050505; /* Nero profondo */
+            color: white;
             font-family: 'Courier New', Courier, monospace;
             height: 100vh;
-            margin: 0;
+            width: 100vw;
             overflow: hidden;
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
         }
 
-        /* --- IL VELENO (CORPO SOLIDO) --- */
-        #poison-layer {
+        /* --- IL VELENO (CONTENITORE) --- */
+        #poison-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 0%; /* Cresce col tempo */
-            background: linear-gradient(to bottom, #0a3a0a 0%, #1e6b1e 100%);
+            height: 0%; /* AUMENTA COL TEMPO */
+            background: linear-gradient(180deg, #001a00 0%, #004d00 100%);
             z-index: 1;
             transition: height 1s linear;
         }
 
-        /* --- L'ONDA (BORDO INFERIORE PULSANTE) --- */
-        #poison-layer::after {
-            content: "";
+        /* --- LE ONDE (SVG) --- */
+        .waves-box {
             position: absolute;
-            left: 0;
+            bottom: -50px; /* Sporge sotto il blocco verde */
             width: 100%;
-            
-            /* Immagine dell'onda */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z' fill='%231e6b1e'/%3E%3C/svg%3E");
-            background-size: 1200px 100%; /* Dimensione fissa orizzontale */
-            background-repeat: repeat-x;
-            background-position: center bottom; /* FISSA AL CENTRO, NON SCORRE */
-            
-            /* Animazione di pulsazione verticale */
-            animation: wavePulse 4s ease-in-out infinite alternate;
+            height: 50px;
+            z-index: 2;
         }
 
-        /* Questa animazione fa "respirare" l'onda in altezza invece che scorrere */
-        @keyframes wavePulse {
-            0% {
-                height: 40px;
-                bottom: -39px; /* Si alza leggermente */
-            }
-            100% {
-                height: 55px; /* Si gonfia */
-                bottom: -54px; /* Scende per compensare l'altezza */
-            }
+        /* Animazione onde parallasse */
+        .parallax > use {
+            animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite;
+        }
+        .parallax > use:nth-child(1) {
+            animation-delay: -2s;
+            animation-duration: 7s;
+            fill: rgba(0, 255, 0, 0.7); /* Onda chiarissima veloce */
+        }
+        .parallax > use:nth-child(2) {
+            animation-delay: -3s;
+            animation-duration: 10s;
+            fill: rgba(0, 100, 0, 0.5); /* Onda media */
+        }
+        .parallax > use:nth-child(3) {
+            animation-delay: -4s;
+            animation-duration: 13s;
+            fill: #004d00; /* Onda principale (stesso colore del fondo del veleno) */
         }
 
-        /* --- IL TASTIERINO (ALTISSIMA VISIBILITÀ) --- */
-        .container {
-            position: relative; 
-            z-index: 9999; /* Livello estremo per sicurezza */
-            
-            background-color: #151515; 
+        @keyframes move-forever {
+            0% { transform: translate3d(-90px,0,0); }
+            100% { transform: translate3d(85px,0,0); }
+        }
+
+        /* --- IL TASTIERINO (SOLIDO E VISIBILE) --- */
+        .panel {
+            position: relative;
+            z-index: 999; /* Livello massimo */
+            background: #1a1a1a;
             padding: 25px;
-            border-radius: 8px;
-            border: 4px solid #555;
-            box-shadow: 0 0 80px #000, 0 0 30px rgba(0,0,0,1); 
+            border-radius: 10px;
+            border: 4px solid #333;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             width: 280px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 15px;
         }
 
-        .header-label {
-            text-align: center; color: #888; text-transform: uppercase;
-            border-bottom: 2px solid #555; padding-bottom: 8px; font-size: 0.9rem;
+        .screen {
+            background: #000;
+            border: 2px solid #444;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
         }
 
         #timer {
-            font-size: 3.5rem; color: #f00; text-align: center;
-            background: #000; padding: 10px; border: 3px solid #555; border-radius: 4px;
-            font-weight: bold; text-shadow: 0 0 10px #f00;
+            font-size: 3rem;
+            color: #ff3333;
+            font-weight: bold;
+            text-shadow: 0 0 10px #ff0000;
+            margin-bottom: 5px;
         }
 
-        #display {
-            background: #0f2b0f; color: #0f0; font-size: 1.5rem;
-            height: 50px; line-height: 50px; text-align: center;
-            border: 3px inset #555; letter-spacing: 4px; overflow: hidden;
-            border-radius: 4px;
+        #code-display {
+            font-size: 1.5rem;
+            color: #33ff33;
+            height: 30px;
+            letter-spacing: 5px;
         }
-        
-        .error-shake { animation: shake 0.5s; background: #800 !important; color: white !important; }
-        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
 
-        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
 
         button {
-            background: linear-gradient(to bottom, #444, #333);
-            color: #fff; border: 1px solid #555; border-radius: 4px;
-            font-size: 1.4rem; padding: 15px 0; cursor: pointer;
-            box-shadow: 0 4px 0 #111;
+            background: #333;
+            border: 1px solid #555;
+            color: white;
+            font-size: 1.2rem;
+            padding: 15px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.1s;
         }
-        button:active { transform: translateY(4px); box-shadow: none; background: #222; }
+        button:active { background: #555; transform: translateY(2px); }
 
-        .btn-c { background: linear-gradient(to bottom, #d4a017, #b8860b); color: #000; font-weight: bold; border-color: #8b6508; }
-        .btn-ok { background: linear-gradient(to bottom, #2e8b57, #1e5b39); font-weight: bold; border-color: #1e5b39; }
+        .btn-c { background: #b38f00; color: black; font-weight: bold; }
+        .btn-ok { background: #006600; font-weight: bold; }
 
-        #message { text-align: center; height: 20px; color: #f44; font-weight: bold; font-size: 0.9rem; margin-top: -5px; }
-
-        /* --- SCHERMATE OVERLAY --- */
+        /* --- OVERLAY AVVIO/FINE --- */
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.98);
+            background: rgba(0,0,0,0.95);
             z-index: 10000;
-            display: flex; justify-content: center; align-items: center;
-            flex-direction: column; text-align: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center;
         }
-        
         .hidden { display: none !important; }
-
-        .btn-start {
-            padding: 20px 40px; font-size: 1.5rem;
-            background: #0f0; border: none; cursor: pointer;
-            font-weight: bold; text-transform: uppercase;
-            box-shadow: 0 0 20px #0f0; font-family: monospace;
-            margin-top: 20px;
-        }
         
-        h1 { margin: 10px 0; font-size: 2.5rem; }
+        .btn-big {
+            padding: 20px 40px; font-size: 1.5rem; background: #0f0; border: none;
+            cursor: pointer; font-weight: bold; margin-top: 20px;
+            box-shadow: 0 0 20px #0f0; text-transform: uppercase;
+        }
+
+        /* Animazione Errore */
+        .shake { animation: shake 0.4s; background: #500 !important; }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
+
     </style>
 </head>
 <body>
 
-    <div id="poison-layer"></div>
-
-    <div id="overlay-start" class="overlay">
-        <h1 style="color: #0f0;">SISTEMA PRONTO</h1>
-        <div style="color: #ccc;">Attivare il protocollo</div>
-        <button class="btn-start" onclick="initGame()">AVVIA</button>
+    <div id="poison-container">
+        <svg class="waves-box" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax">
+                <use xlink:href="#gentle-wave" x="48" y="0" />
+                <use xlink:href="#gentle-wave" x="48" y="3" />
+                <use xlink:href="#gentle-wave" x="48" y="5" />
+            </g>
+        </svg>
     </div>
 
-    <div class="container">
-        <div class="header-label">System Locked</div>
-        <div id="timer">15:00</div>
-        <div id="display"></div>
-        <div id="message"></div>
+    <div id="start-view" class="overlay">
+        <h1 style="color:#0f0; font-size:3rem;">SYSTEM READY</h1>
+        <button class="btn-big" onclick="init()">AVVIA TIMER</button>
+    </div>
 
+    <div class="panel">
+        <div class="screen">
+            <div id="timer">15:00</div>
+            <div id="code-display"></div>
+        </div>
+        <div id="msg" style="text-align:center; color:red; height:20px; font-weight:bold;"></div>
+        
         <div class="keypad">
-            <button onclick="input(1)">1</button>
-            <button onclick="input(2)">2</button>
-            <button onclick="input(3)">3</button>
-            <button onclick="input(4)">4</button>
-            <button onclick="input(5)">5</button>
-            <button onclick="input(6)">6</button>
-            <button onclick="input(7)">7</button>
-            <button onclick="input(8)">8</button>
-            <button onclick="input(9)">9</button>
-            <button class="btn-c" onclick="clearCode()">C</button>
-            <button onclick="input(0)">0</button>
-            <button class="btn-ok" onclick="submitCode()">OK</button>
+            <button onclick="tap(1)">1</button>
+            <button onclick="tap(2)">2</button>
+            <button onclick="tap(3)">3</button>
+            <button onclick="tap(4)">4</button>
+            <button onclick="tap(5)">5</button>
+            <button onclick="tap(6)">6</button>
+            <button onclick="tap(7)">7</button>
+            <button onclick="tap(8)">8</button>
+            <button onclick="tap(9)">9</button>
+            <button class="btn-c" onclick="wipe()">C</button>
+            <button onclick="tap(0)">0</button>
+            <button class="btn-ok" onclick="check()">OK</button>
         </div>
     </div>
 
-    <div id="overlay-boom" class="overlay hidden" style="background: #800;">
-        <h1>CONTAMINAZIONE</h1>
+    <div id="end-bad" class="overlay hidden" style="background:#500;">
+        <h1 style="font-size:4rem;">VELENO RILASCIATO</h1>
         <h2>CHIARA È MORTA</h2>
     </div>
-    <div id="overlay-safe" class="overlay hidden" style="background: #060;">
-        <h1>SISTEMA SICURO</h1>
-        <h2>DISINNESCATO</h2>
+    <div id="end-good" class="overlay hidden" style="background:#060;">
+        <h1 style="font-size:4rem;">DISINNESCATO</h1>
+        <h2>SISTEMA SICURO</h2>
     </div>
 
     <script>
-        // CONFIGURAZIONE
-        const CORRECT_CODE = "34542424";
-        const TOTAL_TIME = 15 * 60; 
-        
-        let timeLeft = TOTAL_TIME;
-        let currentCode = "";
-        let timerActive = false;
-        let timerInterval;
-        let audioCtx = null;
+        const CODE = "34542424";
+        const MINS = 15;
+        let secs = MINS * 60;
+        let input = "";
+        let running = false;
+        let timerInt;
+        let audio;
 
-        const poisonEl = document.getElementById('poison-layer');
-        const timerEl = document.getElementById('timer');
-        const displayEl = document.getElementById('display');
-        const msgEl = document.getElementById('message');
-
-        function initGame() {
-            document.getElementById('overlay-start').classList.add('hidden');
+        function init() {
+            document.getElementById('start-view').classList.add('hidden');
             try {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                audioCtx.resume();
-            } catch(e) {}
-            timerActive = true;
-            startTimer();
-        }
-
-        function startTimer() {
-            timerInterval = setInterval(() => {
-                if (timeLeft <= 0) {
-                    endGame(false);
+                audio = new (window.AudioContext || window.webkitAudioContext)();
+                audio.resume();
+            } catch(e){}
+            running = true;
+            
+            // Loop Timer
+            timerInt = setInterval(() => {
+                if(secs > 0) {
+                    secs--;
+                    draw();
                 } else {
-                    timeLeft--;
-                    updateScreen();
+                    over(false);
                 }
             }, 1000);
         }
 
-        function updateScreen() {
-            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-            const s = (timeLeft % 60).toString().padStart(2, '0');
-            timerEl.innerText = `${m}:${s}`;
+        function draw() {
+            // Timer Testo
+            let m = Math.floor(secs / 60).toString().padStart(2,'0');
+            let s = (secs % 60).toString().padStart(2,'0');
+            document.getElementById('timer').innerText = m + ":" + s;
 
-            const percent = ((TOTAL_TIME - timeLeft) / TOTAL_TIME) * 100;
-            poisonEl.style.height = `${percent}%`;
-
-            if (timeLeft < 60) {
-                if (timeLeft % 2 === 0) {
-                    timerEl.style.background = "#a00"; timerEl.style.color = "black";
-                } else {
-                    timerEl.style.background = "black"; timerEl.style.color = "#f00";
-                    if (timeLeft < 10 && audioCtx) beep(800, 'square', 0.05);
-                }
+            // Panico
+            if(secs < 60) {
+                let t = document.getElementById('timer');
+                t.style.color = (secs % 2 == 0) ? "black" : "red";
+                t.style.background = (secs % 2 == 0) ? "red" : "black";
+                if(secs < 10 && audio) beep(800, 'square', 0.05);
             }
+
+            // Veleno Altezza
+            let pct = ((MINS * 60 - secs) / (MINS * 60)) * 100;
+            document.getElementById('poison-container').style.height = pct + "%";
         }
 
-        function input(n) {
-            if (!timerActive) return;
+        function tap(n) {
+            if(!running) return;
             beep(600, 'square', 0.05);
-            if (currentCode.length < 12) {
-                currentCode += n;
-                displayEl.innerText = currentCode;
+            if(input.length < 12) {
+                input += n;
+                document.getElementById('code-display').innerText = input;
             }
         }
 
-        function clearCode() {
-            if (!timerActive) return;
+        function wipe() {
+            if(!running) return;
             beep(300, 'sawtooth', 0.1);
-            currentCode = "";
-            displayEl.innerText = "";
-            msgEl.innerText = "";
-            displayEl.classList.remove("error-shake");
+            input = "";
+            document.getElementById('code-display').innerText = "";
         }
 
-        function submitCode() {
-            if (!timerActive) return;
-            if (currentCode === CORRECT_CODE) {
-                endGame(true);
+        function check() {
+            if(!running) return;
+            if(input === CODE) {
+                over(true);
             } else {
-                beep(100, 'sawtooth', 0.4);
-                msgEl.innerText = "CODICE ERRATO";
-                currentCode = "";
-                displayEl.innerText = "";
-                displayEl.classList.add("error-shake");
-                setTimeout(() => displayEl.classList.remove("error-shake"), 500);
+                beep(150, 'sawtooth', 0.5);
+                let d = document.getElementById('code-display');
+                d.innerText = "ERRATO";
+                d.classList.add('shake');
+                input = "";
+                setTimeout(() => {
+                    d.innerText = "";
+                    d.classList.remove('shake');
+                }, 500);
             }
         }
 
-        function endGame(win) {
-            clearInterval(timerInterval);
-            timerActive = false;
-            if (win) {
-                beep(600, 'sine', 0.1); setTimeout(()=>beep(1200,'sine',0.4), 100);
-                document.getElementById('overlay-safe').classList.remove('hidden');
+        function over(win) {
+            clearInterval(timerInt);
+            running = false;
+            if(win) {
+                beep(600,'sine',0.2); setTimeout(()=>beep(900,'sine',0.4),150);
+                document.getElementById('end-good').classList.remove('hidden');
             } else {
-                beep(100, 'sawtooth', 2);
-                poisonEl.style.height = "100%";
-                document.getElementById('overlay-boom').classList.remove('hidden');
+                beep(100,'sawtooth',2);
+                document.getElementById('poison-container').style.height = "100%";
+                document.getElementById('end-bad').classList.remove('hidden');
             }
         }
 
-        function beep(freq, type, dur) {
-            if (!audioCtx) return;
+        function beep(f, t, d) {
+            if(!audio) return;
             try {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = type; osc.frequency.value = freq;
-                gain.gain.value = 0.1;
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + dur);
-            } catch(e) {}
+                let o = audio.createOscillator();
+                let g = audio.createGain();
+                o.type = t; o.frequency.value = f;
+                g.gain.value = 0.1;
+                o.connect(g); g.connect(audio.destination);
+                o.start(); o.stop(audio.currentTime + d);
+            } catch(e){}
         }
     </script>
 </body>
