@@ -17,45 +17,64 @@
             overflow: hidden;
             user-select: none;
             position: relative;
-            --poison-height: 0%; 
         }
 
-        /* --- EFFETTO ONDA VELENO --- */
-        body::before {
+        /* --- IL VELENO (LIQUIDO) --- */
+        #poison {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0%; /* Questa percentuale aumenterà col timer */
+            
+            /* Sfumatura verde tossico verticale */
+            background: linear-gradient(to bottom, #0a2e0a 0%, #1e5b1e 100%);
+            
+            z-index: 1; /* Sopra lo sfondo nero, ma sotto la bomba */
+            transition: height 1s linear;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+
+        /* --- L'ONDA SUL BORDO INFERIORE DEL VELENO --- */
+        #poison::after {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 100%;
-            height: var(--poison-height);
-            z-index: 0;
-            transition: height 1s linear;
-            pointer-events: none;
-            background-image: 
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z' fill='%230f380f' opacity='0.95' /%3E%3C/svg%3E"),
-                linear-gradient(to bottom, rgba(15, 56, 15, 0.95) 0%, rgba(42, 122, 42, 0.8) 100%);
-            background-size: 200% 50px, 100% 100%;
-            background-repeat: repeat-x, no-repeat;
-            background-position: left bottom, left top;
-            animation: waveAnim 8s linear infinite;
+            
+            /* Si attacca al fondo del liquido verde */
+            bottom: -40px; 
+            left: 0;
+            width: 100%;
+            height: 40px; /* Altezza dell'onda */
+            
+            /* Disegno dell'onda tramite SVG codificato */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z' fill='%231e5b1e'/%3E%3C/svg%3E");
+            
+            background-size: 200% 100%; /* Larghezza doppia per animazione fluida */
+            background-repeat: repeat-x;
+            
+            /* Animazione che muove l'onda */
+            animation: waveFlow 6s linear infinite;
         }
 
-        @keyframes waveAnim {
-            from { background-position-x: 0, 0; }
-            to { background-position-x: -200%, 0; }
+        @keyframes waveFlow {
+            0% { background-position-x: 0; }
+            100% { background-position-x: -200%; }
         }
 
-        /* --- TASTIERINO --- */
+        /* --- DESIGN DELLA BOMBA --- */
         .container {
-            background-color: #2a2a2a;
+            background-color: #222;
             padding: 25px;
-            border-radius: 4px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 1);
-            border: 6px solid #444;
+            border-radius: 6px;
+            /* Ombra forte per staccarlo dallo sfondo verde */
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 1); 
+            border: 5px solid #333;
             width: 280px;
             display: flex;
             flex-direction: column;
             gap: 12px;
             position: relative;
-            z-index: 10;
+            z-index: 10; /* DEVE ESSERE PIU ALTO DI z-index DEL VELENO */
         }
 
         .header-label {
@@ -67,14 +86,14 @@
         #timer {
             font-size: 3.5rem; color: #ff0000; text-align: center;
             background-color: #000; padding: 10px 0;
-            border: 3px solid #666; border-radius: 2px;
+            border: 3px solid #555; border-radius: 4px;
             text-shadow: 0 0 10px #ff0000; font-weight: bold;
         }
 
         #display {
             background-color: #0f380f; color: #00ff00;
             font-size: 1.5rem; height: 50px; line-height: 50px;
-            text-align: center; border: 3px inset #555; border-radius: 2px;
+            text-align: center; border: 3px inset #555; border-radius: 4px;
             letter-spacing: 4px; overflow: hidden;
         }
         .display-error { background-color: #500 !important; color: #fff !important; }
@@ -82,46 +101,44 @@
         .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 
         button {
-            background: #333; border: 1px solid #555; color: #eee;
-            font-size: 1.4rem; padding: 15px 0; border-radius: 2px;
+            background: linear-gradient(180deg, #3a3a3a, #2a2a2a);
+            border: 1px solid #444; color: #eee;
+            font-size: 1.4rem; padding: 15px 0; border-radius: 4px;
             cursor: pointer; box-shadow: 0 4px 0 #111;
         }
         button:active { transform: translateY(4px); box-shadow: 0 0 0 #111; }
 
-        .btn-clear { background: #b8860b; color: #000; border-color: #8b6508; }
-        .btn-enter { background: #2e8b57; color: #fff; border-color: #1e5b39; }
+        .btn-clear { background: linear-gradient(180deg, #d4a017, #b8860b); color: #000; border-color: #8b6508; }
+        .btn-enter { background: linear-gradient(180deg, #2e8b57, #1e5b39); color: #fff; border-color: #1e5b39; }
 
         #message { text-align: center; height: 20px; font-weight: bold; color: #ff4444; margin-top: -5px; }
 
-        /* --- SCHERMATE OVERLAY --- */
+        /* --- OVERLAYS --- */
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; justify-content: center; align-items: center;
             flex-direction: column; z-index: 100; text-align: center;
         }
         
-        /* Schermata di Avvio */
-        #overlay-start {
-            background-color: rgba(0,0,0,0.9);
-            z-index: 200;
-        }
+        #overlay-start { background-color: rgba(0,0,0,0.95); z-index: 200; }
         .btn-start {
-            background-color: #2e8b57; color: white; padding: 20px 40px;
-            font-size: 2rem; border: 2px solid #fff; cursor: pointer;
-            font-family: 'Courier New', Courier, monospace;
-            text-transform: uppercase; letter-spacing: 3px;
+            background-color: #00ff00; color: black; padding: 20px 40px;
+            font-size: 1.5rem; border: none; cursor: pointer; font-weight: bold;
+            box-shadow: 0 0 20px #00ff00; text-transform: uppercase;
         }
 
         .hidden { display: none !important; }
         .boom { background-color: #aa0000; color: #fff; }
         .safe { background-color: #2e8b57; color: #fff; }
-    </style>
+    </script>
 </head>
 <body>
 
+    <div id="poison"></div>
+
     <div id="overlay-start" class="overlay">
-        <h1 style="color: #00ff00; margin-bottom: 30px;">PROTOCOLLO DI SICUREZZA</h1>
-        <button class="btn-start" onclick="initGame()">AVVIA SISTEMA</button>
+        <h1 style="color: #00ff00; margin-bottom: 20px; font-family: monospace;">SYSTEM BOOT</h1>
+        <button class="btn-start" onclick="initGame()">AVVIA PROTOCOLLO</button>
     </div>
 
     <div class="container" id="bombbox">
@@ -147,54 +164,45 @@
     </div>
 
     <div id="overlay-boom" class="overlay boom hidden">
-        <h1 style="font-size: 3rem;">VELENO RILASCIATO</h1>
+        <h1 style="font-size: 3rem;">CONTAMINAZIONE TOTALE</h1>
         <h2>TEMPO SCADUTO</h2>
     </div>
     
     <div id="overlay-safe" class="overlay safe hidden">
-        <h1 style="font-size: 3rem;">SISTEMA SICURO</h1>
+        <h1 style="font-size: 3rem;">SALVATI</h1>
         <h2>CODICE ACCETTATO</h2>
     </div>
 
     <script>
-        // CONFIGURAZIONE
         const CORRECT_CODE = "34542424";
         const TOTAL_TIME = 15 * 60; 
         
         let timeLeft = TOTAL_TIME;
         let currentCode = "";
-        let timerActive = false; // Parte falso, diventa vero dopo Start
+        let timerActive = false;
         let timerInterval;
         let audioCtx = null;
 
-        // ELEMENTI HTML
         const displayEl = document.getElementById('display');
         const timerEl = document.getElementById('timer');
         const msgEl = document.getElementById('message');
+        const poisonEl = document.getElementById('poison');
 
-        // 1. FUNZIONE DI AVVIO (Chiamata dal bottone iniziale)
         function initGame() {
-            // Nascondi schermata avvio
             document.getElementById('overlay-start').classList.add('hidden');
-            
-            // Avvia Audio
             try {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 audioCtx.resume();
-            } catch(e) { console.log("Audio Error"); }
-
-            // Avvia Timer
+            } catch(e) {}
             timerActive = true;
             startTimer();
         }
 
-        // 2. SISTEMA AUDIO
         function beep(type) {
             if (!audioCtx) return; 
             try {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-                
                 if (type === 'click') {
                     osc.type = 'square'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
                     gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
@@ -213,7 +221,6 @@
             } catch(e) {}
         }
 
-        // 3. LOGICA TIMER
         function startTimer() {
             timerInterval = setInterval(() => {
                 if (timeLeft <= 0) {
@@ -230,11 +237,10 @@
             const s = (timeLeft % 60).toString().padStart(2, '0');
             timerEl.innerText = `${m}:${s}`;
 
-            // Veleno
+            // Aggiorna l'altezza del veleno (dall'alto verso il basso)
             const percent = ((TOTAL_TIME - timeLeft) / TOTAL_TIME) * 100;
-            document.body.style.setProperty('--poison-height', `${percent}%`);
+            poisonEl.style.height = `${percent}%`;
 
-            // Panico
             if (timeLeft < 60) {
                 if (timeLeft % 2 === 0) {
                     timerEl.style.backgroundColor = "#a00"; timerEl.style.color = "black";
@@ -244,7 +250,6 @@
             }
         }
 
-        // 4. LOGICA TASTI
         function input(n) {
             if (!timerActive) return;
             beep('click');
@@ -287,7 +292,7 @@
                 document.getElementById('overlay-safe').classList.remove('hidden');
             } else {
                 beep('error');
-                document.body.style.setProperty('--poison-height', '100%');
+                poisonEl.style.height = '100%'; // Tutto verde
                 document.getElementById('overlay-boom').classList.remove('hidden');
             }
         }
