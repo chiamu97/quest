@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Protocollo Attivo</title>
     <style>
-        /* --- LAYOUT GENERALE --- */
+        /* --- IMPOSTAZIONI BASE --- */
         body {
-            background-color: #000; /* Nero assoluto sotto tutto */
+            background-color: #000;
             color: #fff;
             font-family: 'Courier New', Courier, monospace;
             height: 100vh;
@@ -16,58 +16,76 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative; /* Necessario per i livelli */
+            position: relative;
         }
 
-        /* --- IL VELENO (LIVELLO 1 - SOTTO) --- */
+        /* --- IL VELENO (CONTENITORE) --- */
         #poison-layer {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 0%; /* Cresce col tempo */
-            
-            /* SFONDO FISSO (Non scorre) */
             background: linear-gradient(to bottom, #0a3a0a 0%, #1e6b1e 100%);
-            
-            z-index: 1; /* Livello basso */
+            z-index: 1;
             transition: height 1s linear;
         }
 
-        /* L'ONDA (Solo il bordo inferiore si muove) */
+        /* --- ONDA 1 (Principale) --- */
         #poison-layer::after {
             content: "";
             position: absolute;
-            bottom: -30px; /* Sporge appena sotto il verde */
+            bottom: -40px;
             left: 0;
             width: 100%;
-            height: 30px;
-            
-            /* Immagine onda generata via codice */
+            height: 40px;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z' fill='%231e6b1e'/%3E%3C/svg%3E");
-            
-            background-size: 200% 100%; 
+            background-size: 200% 100%;
             background-repeat: repeat-x;
-            
-            /* Solo l'onda si muove, non il verde sopra */
-            animation: waveMove 6s linear infinite;
+            opacity: 1;
+            /* Si muove verso sinistra */
+            animation: waveMove 10s linear infinite; 
+        }
+
+        /* --- ONDA 2 (Secondaria - Crea l'effetto naturale) --- */
+        #poison-layer::before {
+            content: "";
+            position: absolute;
+            bottom: -35px; /* Leggermente sfalsata */
+            left: 0;
+            width: 100%;
+            height: 40px;
+            /* Stessa onda ma più chiara/trasparente */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z' fill='%232a8a2a'/%3E%3C/svg%3E");
+            background-size: 200% 100%;
+            background-repeat: repeat-x;
+            opacity: 0.5; /* Semitrasparente */
+            z-index: 2; /* Sopra l'onda 1 */
+            /* Si muove verso DESTRA e più veloce -> CAOS ORGANICO */
+            animation: waveMoveReverse 7s linear infinite;
         }
 
         @keyframes waveMove {
             0% { background-position-x: 0; }
             100% { background-position-x: -200%; }
         }
+        
+        @keyframes waveMoveReverse {
+            0% { background-position-x: 0; }
+            100% { background-position-x: 200%; }
+        }
 
-        /* --- IL TASTIERINO (LIVELLO 999 - SOPRA A TUTTO) --- */
+        /* --- IL TASTIERINO (ALTO CONTRASTO) --- */
         .container {
             position: relative; 
-            z-index: 999; /* ALTISSIMO: Assicura che si veda */
+            z-index: 999; /* Sempre sopra a tutto */
             
-            background-color: #1a1a1a; /* Sfondo scuro per il box */
+            background-color: #151515; 
             padding: 25px;
             border-radius: 8px;
-            border: 4px solid #444;
-            box-shadow: 0 0 50px rgba(0,0,0,0.9); /* Ombra forte per staccarlo */
+            border: 4px solid #555;
+            /* Ombra esterna fortissima + bagliore verde leggero */
+            box-shadow: 0 0 80px #000, 0 0 20px rgba(0,0,0,0.9); 
             width: 280px;
             display: flex;
             flex-direction: column;
@@ -114,7 +132,7 @@
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.98);
-            z-index: 1000; /* Massima priorità */
+            z-index: 1000;
             display: flex; justify-content: center; align-items: center;
             flex-direction: column; text-align: center;
         }
@@ -138,7 +156,7 @@
 
     <div id="overlay-start" class="overlay">
         <h1 style="color: #0f0;">SISTEMA PRONTO</h1>
-        <div style="color: #ccc;">Clicca per attivare il timer</div>
+        <div style="color: #ccc;">Attivare il protocollo</div>
         <button class="btn-start" onclick="initGame()">AVVIA</button>
     </div>
 
@@ -176,7 +194,7 @@
     <script>
         // CONFIGURAZIONE
         const CORRECT_CODE = "34542424";
-        const TOTAL_TIME = 15 * 60; // 15 Minuti
+        const TOTAL_TIME = 15 * 60; 
         
         let timeLeft = TOTAL_TIME;
         let currentCode = "";
@@ -184,7 +202,6 @@
         let timerInterval;
         let audioCtx = null;
 
-        // ELEMENTI
         const poisonEl = document.getElementById('poison-layer');
         const timerEl = document.getElementById('timer');
         const displayEl = document.getElementById('display');
@@ -192,13 +209,10 @@
 
         function initGame() {
             document.getElementById('overlay-start').classList.add('hidden');
-            
-            // Audio unlock
             try {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 audioCtx.resume();
             } catch(e) {}
-
             timerActive = true;
             startTimer();
         }
@@ -215,27 +229,23 @@
         }
 
         function updateScreen() {
-            // Aggiorna Timer
             const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
             const s = (timeLeft % 60).toString().padStart(2, '0');
             timerEl.innerText = `${m}:${s}`;
 
-            // Aggiorna Veleno (altezza)
             const percent = ((TOTAL_TIME - timeLeft) / TOTAL_TIME) * 100;
             poisonEl.style.height = `${percent}%`;
 
-            // Effetto Panico
             if (timeLeft < 60) {
                 if (timeLeft % 2 === 0) {
                     timerEl.style.background = "#a00"; timerEl.style.color = "black";
                 } else {
                     timerEl.style.background = "black"; timerEl.style.color = "#f00";
-                    if (timeLeft < 10 && audioCtx) beep(800, 'square', 0.05); // Beep finale
+                    if (timeLeft < 10 && audioCtx) beep(800, 'square', 0.05);
                 }
             }
         }
 
-        // GESTIONE INPUT
         function input(n) {
             if (!timerActive) return;
             beep(600, 'square', 0.05);
@@ -256,7 +266,6 @@
 
         function submitCode() {
             if (!timerActive) return;
-            
             if (currentCode === CORRECT_CODE) {
                 endGame(true);
             } else {
@@ -264,7 +273,6 @@
                 msgEl.innerText = "CODICE ERRATO";
                 currentCode = "";
                 displayEl.innerText = "";
-                
                 displayEl.classList.add("error-shake");
                 setTimeout(() => displayEl.classList.remove("error-shake"), 500);
             }
@@ -283,19 +291,15 @@
             }
         }
 
-        // GENERATORE SUONI
         function beep(freq, type, dur) {
             if (!audioCtx) return;
             try {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-                osc.type = type;
-                osc.frequency.value = freq;
+                osc.type = type; osc.frequency.value = freq;
                 gain.gain.value = 0.1;
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + dur);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + dur);
             } catch(e) {}
         }
     </script>
