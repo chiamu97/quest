@@ -20,132 +20,80 @@
             --poison-height: 0%; 
         }
 
+        /* SFONDO VELENO */
         body::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
+            top: 0; left: 0; width: 100%;
             height: var(--poison-height);
-            background: linear-gradient(to bottom, rgba(15, 56, 15, 0.9) 0%, rgba(42, 122, 42, 0.8) 100%);
+            background: linear-gradient(to bottom, rgba(15, 56, 15, 0.95) 0%, rgba(42, 122, 42, 0.8) 100%);
             z-index: 0;
             transition: height 1s linear;
             pointer-events: none;
         }
 
+        /* BOX PRINCIPALE */
         .container {
             background-color: #2a2a2a;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
-            border: 4px solid #444;
+            padding: 25px;
+            border-radius: 4px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 1);
+            border: 6px solid #444;
             width: 280px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             position: relative;
             z-index: 10;
         }
 
         .header-label {
-            text-align: center;
-            font-size: 0.8rem;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 1px solid #444;
-            padding-bottom: 10px;
-            margin-bottom: 5px;
+            text-align: center; font-size: 0.9rem; color: #888;
+            text-transform: uppercase; letter-spacing: 2px;
+            border-bottom: 2px solid #444; padding-bottom: 8px;
         }
 
         #timer {
-            font-size: 3.2rem;
-            color: #ff0000;
-            text-align: center;
-            background-color: #000;
-            padding: 10px 0;
-            border: 2px solid #555;
-            border-radius: 4px;
-            text-shadow: 0 0 10px #ff0000;
-            font-weight: bold;
-            transition: background-color 0.2s, color 0.2s;
+            font-size: 3.5rem; color: #ff0000; text-align: center;
+            background-color: #000; padding: 10px 0;
+            border: 3px solid #666; border-radius: 2px;
+            text-shadow: 0 0 10px #ff0000; font-weight: bold;
         }
 
         #display {
-            background-color: #0f380f;
-            color: #00ff00;
-            font-size: 1.5rem;
-            height: 45px;
-            line-height: 45px;
-            text-align: center;
-            border: 2px inset #555;
-            border-radius: 4px;
-            letter-spacing: 4px;
-            overflow: hidden;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-            transition: background-color 0.2s;
+            background-color: #0f380f; color: #00ff00;
+            font-size: 1.5rem; height: 50px; line-height: 50px;
+            text-align: center; border: 3px inset #555; border-radius: 2px;
+            letter-spacing: 4px; overflow: hidden;
         }
-
         .display-error { background-color: #500 !important; color: #fff !important; }
 
-        .keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
+        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 
         button {
-            background: linear-gradient(180deg, #444, #333);
-            border: 1px solid #222;
-            color: #ddd;
-            font-size: 1.3rem;
-            padding: 12px 0;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: all 0.05s;
-            box-shadow: 0 3px 0 #111;
-            font-family: inherit;
+            background: #333; border: 1px solid #555; color: #eee;
+            font-size: 1.4rem; padding: 15px 0; border-radius: 2px;
+            cursor: pointer; box-shadow: 0 4px 0 #111;
         }
-        button:active { transform: translateY(3px); box-shadow: 0 0 0 #111; background: #222; }
+        button:active { transform: translateY(4px); box-shadow: 0 0 0 #111; }
 
-        .btn-clear {
-            background: linear-gradient(180deg, #d4a017, #b8860b);
-            color: #000;
-            font-weight: bold;
-            box-shadow: 0 3px 0 #684a04;
-            border: 1px solid #684a04;
-        }
-        .btn-enter {
-            background: linear-gradient(180deg, #2e8b57, #1e5b39);
-            color: #fff;
-            box-shadow: 0 3px 0 #0f381e;
-            border: 1px solid #0f381e;
-        }
+        .btn-clear { background: #b8860b; color: #000; border-color: #8b6508; }
+        .btn-enter { background: #2e8b57; color: #fff; border-color: #1e5b39; }
 
-        #message {
-            text-align: center;
-            height: 20px;
-            font-weight: bold;
-            color: #ff4444;
-            font-size: 0.9rem;
-            margin-top: -5px;
-        }
-
-        .shake { animation: shake 0.4s; }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
-        }
+        #message { text-align: center; height: 20px; font-weight: bold; color: #ff4444; margin-top: -5px; }
 
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: none; justify-content: center; align-items: center;
             flex-direction: column; z-index: 100; text-align: center;
         }
-        .boom { background-color: #aa0000; color: #fff; animation: flashRed 0.5s infinite; }
+        .boom { background-color: #aa0000; color: #fff; }
         .safe { background-color: #2e8b57; color: #fff; }
-        @keyframes flashRed { 0%, 100% { background-color: #aa0000; } 50% { background-color: #ff0000; } }
+    </script>
+    <style>
+        /* CSS Animazioni Extra */
+        @keyframes flash { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .flashing { animation: flash 0.5s infinite; }
     </style>
 </head>
 <body>
@@ -157,69 +105,168 @@
         <div id="message"></div>
 
         <div class="keypad">
-            <button onclick="press(1)">1</button>
-            <button onclick="press(2)">2</button>
-            <button onclick="press(3)">3</button>
-            <button onclick="press(4)">4</button>
-            <button onclick="press(5)">5</button>
-            <button onclick="press(6)">6</button>
-            <button onclick="press(7)">7</button>
-            <button onclick="press(8)">8</button>
-            <button onclick="press(9)">9</button>
-            <button class="btn-clear" onclick="clearInput()">C</button>
-            <button onclick="press(0)">0</button>
-            <button class="btn-enter" onclick="checkCode()">OK</button>
+            <button onclick="input(1)">1</button>
+            <button onclick="input(2)">2</button>
+            <button onclick="input(3)">3</button>
+            <button onclick="input(4)">4</button>
+            <button onclick="input(5)">5</button>
+            <button onclick="input(6)">6</button>
+            <button onclick="input(7)">7</button>
+            <button onclick="input(8)">8</button>
+            <button onclick="input(9)">9</button>
+            <button class="btn-clear" onclick="clearCode()">C</button>
+            <button onclick="input(0)">0</button>
+            <button class="btn-enter" onclick="submitCode()">OK</button>
         </div>
     </div>
 
     <div id="overlay-boom" class="overlay boom">
-        <div style="font-size: 5rem; font-weight:bold;">BOOM!</div>
-        <div style="font-size: 2rem; margin-top:20px;">VELENO RILASCIATO</div>
+        <h1 style="font-size: 3rem;">VELENO RILASCIATO</h1>
+        <h2>TEMPO SCADUTO</h2>
     </div>
     
     <div id="overlay-safe" class="overlay safe">
-        <div style="font-size: 4rem; font-weight:bold;">SALVATA</div>
-        <div style="font-size: 1.5rem; margin-top:20px;">SISTEMA SICURO</div>
+        <h1 style="font-size: 3rem;">SISTEMA SICURO</h1>
+        <h2>CODICE ACCETTATO</h2>
     </div>
 
     <script>
         // CONFIGURAZIONE
-        const TOTAL_TIME_MINUTES = 15;
         const CORRECT_CODE = "34542424";
+        const TOTAL_TIME = 15 * 60; 
         
-        let timeRemaining = TOTAL_TIME_MINUTES * 60; 
-        const TOTAL_TIME_SECONDS = timeRemaining;
-        
-        let currentInput = "";
+        let timeLeft = TOTAL_TIME;
+        let currentCode = "";
+        let timerActive = true;
         let timerInterval;
-        let isGameActive = true;
-        let audioCtx = null; // Audio spento all'inizio
+        let audioCtx = null;
 
-        // ELEMENTI
-        const displayElement = document.getElementById('display');
-        const timerElement = document.getElementById('timer');
-        const messageElement = document.getElementById('message');
-        const bombBox = document.getElementById('bombbox');
+        // AVVIO AUTOMATICO
+        window.onload = function() {
+            startTimer();
+            // Trucco per sbloccare l'audio al primo tocco ovunque
+            document.body.addEventListener('click', initAudio, { once: true });
+        };
 
-        // FUNZIONI AUDIO (PROTETTE)
         function initAudio() {
             if (!audioCtx) {
-                try {
-                    const AudioContext = window.AudioContext || window.webkitAudioContext;
-                    audioCtx = new AudioContext();
-                    audioCtx.resume();
-                } catch (e) {
-                    console.log("Audio non supportato o bloccato");
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                audioCtx.resume();
+            }
+        }
+
+        // AUDIO GENERATOR
+        function beep(type) {
+            if (!audioCtx) return; 
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                if (type === 'click') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.05);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'win') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.2);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                }
+            } catch(e) {}
+        }
+
+        // TIMER
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    endGame(false);
+                } else {
+                    timeLeft--;
+                    updateScreen();
+                }
+            }, 1000);
+        }
+
+        function updateScreen() {
+            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            const s = (timeLeft % 60).toString().padStart(2, '0');
+            document.getElementById('timer').innerText = `${m}:${s}`;
+
+            // Veleno
+            const percent = ((TOTAL_TIME - timeLeft) / TOTAL_TIME) * 100;
+            document.body.style.setProperty('--poison-height', `${percent}%`);
+
+            // Panico
+            if (timeLeft < 60) {
+                const t = document.getElementById('timer');
+                if (timeLeft % 2 === 0) {
+                    t.style.backgroundColor = "#a00"; t.style.color = "black";
+                } else {
+                    t.style.backgroundColor = "black"; t.style.color = "red";
                 }
             }
         }
 
-        function playTone(freq, type, duration) {
-            if (!audioCtx) initAudio(); // Prova ad avviare se non attivo
-            if (!audioCtx || audioCtx.state !== 'running') return; // Se fallisce, esci senza errori
+        // INPUT
+        function input(n) {
+            initAudio(); // Assicura che l'audio parta
+            if (!timerActive) return;
+            beep('click');
+            if (currentCode.length < 12) {
+                currentCode += n;
+                document.getElementById('display').innerText = currentCode;
+            }
+        }
 
-            try {
-                const osc = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime
+        function clearCode() {
+            initAudio();
+            if (!timerActive) return;
+            beep('click');
+            currentCode = "";
+            document.getElementById('display').innerText = "";
+            document.getElementById('message').innerText = "";
+            document.getElementById('display').classList.remove("display-error");
+        }
+
+        function submitCode() {
+            initAudio();
+            if (!timerActive) return;
+            
+            if (currentCode === CORRECT_CODE) {
+                endGame(true);
+            } else {
+                beep('error');
+                document.getElementById('message').innerText = "CODICE ERRATO";
+                currentCode = "";
+                document.getElementById('display').innerText = "";
+                document.getElementById('display').classList.add("display-error");
+                setTimeout(() => document.getElementById('display').classList.remove("display-error"), 500);
+            }
+        }
+
+        function endGame(win) {
+            clearInterval(timerInterval);
+            timerActive = false;
+            
+            if (win) {
+                beep('win');
+                document.getElementById('overlay-safe').style.display = 'flex';
+            } else {
+                beep('error');
+                document.body.style.setProperty('--poison-height', '100%');
+                document.getElementById('overlay-boom').style.display = 'flex';
+            }
+        }
+    </script>
+</body>
+</html>
