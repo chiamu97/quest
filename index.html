@@ -5,47 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Protocollo Attivo</title>
     <style>
-        /* --- RESET E LAYOUT BASE --- */
+        /* --- LAYOUT GENERALE --- */
         body {
-            margin: 0;
-            padding: 0;
-            background-color: #000; /* Sfondo nero */
-            color: white;
+            background-color: #000; /* Nero assoluto sotto tutto */
+            color: #fff;
             font-family: 'Courier New', Courier, monospace;
             height: 100vh;
-            width: 100vw;
-            overflow: hidden; /* Blocca barre scorrimento */
+            margin: 0;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
+            position: relative; /* Necessario per i livelli */
         }
 
-        /* --- IL VELENO (LIQUIDO) --- */
+        /* --- IL VELENO (LIVELLO 1 - SOTTO) --- */
         #poison-layer {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 0%; /* Questa percentuale cambia col timer */
-            background-color: #006400; /* Verde scuro base */
+            height: 0%; /* Cresce col tempo */
+            
+            /* SFONDO FISSO (Non scorre) */
+            background: linear-gradient(to bottom, #0a3a0a 0%, #1e6b1e 100%);
+            
             z-index: 1; /* Livello basso */
             transition: height 1s linear;
         }
 
-        /* L'ONDA ONDULATA (CSS PURO) */
+        /* L'ONDA (Solo il bordo inferiore si muove) */
         #poison-layer::after {
             content: "";
             position: absolute;
-            bottom: -40px; /* Sporge sotto il blocco verde */
+            bottom: -30px; /* Sporge appena sotto il verde */
             left: 0;
             width: 100%;
-            height: 40px;
-            /* Immagine onda generata via codice sicuro */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z' fill='%23006400'/%3E%3C/svg%3E");
-            background-size: 200% 100%;
+            height: 30px;
+            
+            /* Immagine onda generata via codice */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z' fill='%231e6b1e'/%3E%3C/svg%3E");
+            
+            background-size: 200% 100%; 
             background-repeat: repeat-x;
-            animation: waveMove 5s linear infinite;
+            
+            /* Solo l'onda si muove, non il verde sopra */
+            animation: waveMove 6s linear infinite;
         }
 
         @keyframes waveMove {
@@ -53,64 +58,63 @@
             100% { background-position-x: -200%; }
         }
 
-        /* --- IL TASTIERINO (SOPRA A TUTTO) --- */
-        .game-wrapper {
-            position: relative;
-            z-index: 50; /* Molto più alto del veleno */
-            background-color: #222;
-            padding: 20px;
-            border-radius: 10px;
+        /* --- IL TASTIERINO (LIVELLO 999 - SOPRA A TUTTO) --- */
+        .container {
+            position: relative; 
+            z-index: 999; /* ALTISSIMO: Assicura che si veda */
+            
+            background-color: #1a1a1a; /* Sfondo scuro per il box */
+            padding: 25px;
+            border-radius: 8px;
             border: 4px solid #444;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            box-shadow: 0 0 50px rgba(0,0,0,0.9); /* Ombra forte per staccarlo */
             width: 280px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .label { text-align: center; color: #888; border-bottom: 1px solid #555; padding-bottom: 5px; }
+        .header-label {
+            text-align: center; color: #888; text-transform: uppercase;
+            border-bottom: 2px solid #555; padding-bottom: 8px; font-size: 0.9rem;
+        }
 
         #timer {
-            font-size: 3.5rem;
-            color: red;
-            background: black;
-            text-align: center;
-            padding: 10px;
-            border: 2px solid #555;
-            font-weight: bold;
+            font-size: 3.5rem; color: #f00; text-align: center;
+            background: #000; padding: 10px; border: 3px solid #555; border-radius: 4px;
+            font-weight: bold; text-shadow: 0 0 10px #f00;
         }
 
-        #code-display {
-            background: #0f380f;
-            color: #0f0;
-            font-size: 1.5rem;
-            height: 50px;
-            line-height: 50px;
-            text-align: center;
-            border: 2px inset #555;
-            letter-spacing: 5px;
+        #display {
+            background: #0f2b0f; color: #0f0; font-size: 1.5rem;
+            height: 50px; line-height: 50px; text-align: center;
+            border: 3px inset #555; letter-spacing: 4px; overflow: hidden;
+            border-radius: 4px;
         }
         
-        .error-anim { animation: shake 0.5s; background: #500 !important; color: white !important; }
+        .error-shake { animation: shake 0.5s; background: #800 !important; color: white !important; }
         @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
 
-        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 
         button {
-            padding: 15px; font-size: 1.2rem;
-            background: #333; color: white; border: 1px solid #555;
-            cursor: pointer;
+            background: linear-gradient(to bottom, #444, #333);
+            color: #fff; border: 1px solid #555; border-radius: 4px;
+            font-size: 1.4rem; padding: 15px 0; cursor: pointer;
+            box-shadow: 0 4px 0 #111;
         }
-        button:active { background: #555; }
-        
-        .btn-c { background: #b8860b; color: black; font-weight: bold; }
-        .btn-ok { background: #006400; font-weight: bold; }
+        button:active { transform: translateY(4px); box-shadow: none; background: #222; }
 
-        /* --- SCHERMATE DI AVVIO / FINE --- */
+        .btn-c { background: linear-gradient(to bottom, #d4a017, #b8860b); color: #000; font-weight: bold; border-color: #8b6508; }
+        .btn-ok { background: linear-gradient(to bottom, #2e8b57, #1e5b39); font-weight: bold; border-color: #1e5b39; }
+
+        #message { text-align: center; height: 20px; color: #f44; font-weight: bold; font-size: 0.9rem; margin-top: -5px; }
+
+        /* --- SCHERMATE OVERLAY --- */
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 100; /* Massimo livello */
+            background: rgba(0,0,0,0.98);
+            z-index: 1000; /* Massima priorità */
             display: flex; justify-content: center; align-items: center;
             flex-direction: column; text-align: center;
         }
@@ -118,13 +122,182 @@
         .hidden { display: none !important; }
 
         .btn-start {
-            padding: 20px 50px; font-size: 1.5rem;
+            padding: 20px 40px; font-size: 1.5rem;
             background: #0f0; border: none; cursor: pointer;
             font-weight: bold; text-transform: uppercase;
-            box-shadow: 0 0 20px #0f0;
+            box-shadow: 0 0 20px #0f0; font-family: monospace;
+            margin-top: 20px;
         }
+        
+        h1 { margin: 10px 0; font-size: 2.5rem; }
     </style>
 </head>
 <body>
 
     <div id="poison-layer"></div>
+
+    <div id="overlay-start" class="overlay">
+        <h1 style="color: #0f0;">SISTEMA PRONTO</h1>
+        <div style="color: #ccc;">Clicca per attivare il timer</div>
+        <button class="btn-start" onclick="initGame()">AVVIA</button>
+    </div>
+
+    <div class="container">
+        <div class="header-label">System Locked</div>
+        <div id="timer">15:00</div>
+        <div id="display"></div>
+        <div id="message"></div>
+
+        <div class="keypad">
+            <button onclick="input(1)">1</button>
+            <button onclick="input(2)">2</button>
+            <button onclick="input(3)">3</button>
+            <button onclick="input(4)">4</button>
+            <button onclick="input(5)">5</button>
+            <button onclick="input(6)">6</button>
+            <button onclick="input(7)">7</button>
+            <button onclick="input(8)">8</button>
+            <button onclick="input(9)">9</button>
+            <button class="btn-c" onclick="clearCode()">C</button>
+            <button onclick="input(0)">0</button>
+            <button class="btn-ok" onclick="submitCode()">OK</button>
+        </div>
+    </div>
+
+    <div id="overlay-boom" class="overlay hidden" style="background: #800;">
+        <h1>CONTAMINAZIONE</h1>
+        <h2>CHIARA È MORTA</h2>
+    </div>
+    <div id="overlay-safe" class="overlay hidden" style="background: #060;">
+        <h1>SISTEMA SICURO</h1>
+        <h2>DISINNESCATO</h2>
+    </div>
+
+    <script>
+        // CONFIGURAZIONE
+        const CORRECT_CODE = "34542424";
+        const TOTAL_TIME = 15 * 60; // 15 Minuti
+        
+        let timeLeft = TOTAL_TIME;
+        let currentCode = "";
+        let timerActive = false;
+        let timerInterval;
+        let audioCtx = null;
+
+        // ELEMENTI
+        const poisonEl = document.getElementById('poison-layer');
+        const timerEl = document.getElementById('timer');
+        const displayEl = document.getElementById('display');
+        const msgEl = document.getElementById('message');
+
+        function initGame() {
+            document.getElementById('overlay-start').classList.add('hidden');
+            
+            // Audio unlock
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                audioCtx.resume();
+            } catch(e) {}
+
+            timerActive = true;
+            startTimer();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    endGame(false);
+                } else {
+                    timeLeft--;
+                    updateScreen();
+                }
+            }, 1000);
+        }
+
+        function updateScreen() {
+            // Aggiorna Timer
+            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            const s = (timeLeft % 60).toString().padStart(2, '0');
+            timerEl.innerText = `${m}:${s}`;
+
+            // Aggiorna Veleno (altezza)
+            const percent = ((TOTAL_TIME - timeLeft) / TOTAL_TIME) * 100;
+            poisonEl.style.height = `${percent}%`;
+
+            // Effetto Panico
+            if (timeLeft < 60) {
+                if (timeLeft % 2 === 0) {
+                    timerEl.style.background = "#a00"; timerEl.style.color = "black";
+                } else {
+                    timerEl.style.background = "black"; timerEl.style.color = "#f00";
+                    if (timeLeft < 10 && audioCtx) beep(800, 'square', 0.05); // Beep finale
+                }
+            }
+        }
+
+        // GESTIONE INPUT
+        function input(n) {
+            if (!timerActive) return;
+            beep(600, 'square', 0.05);
+            if (currentCode.length < 12) {
+                currentCode += n;
+                displayEl.innerText = currentCode;
+            }
+        }
+
+        function clearCode() {
+            if (!timerActive) return;
+            beep(300, 'sawtooth', 0.1);
+            currentCode = "";
+            displayEl.innerText = "";
+            msgEl.innerText = "";
+            displayEl.classList.remove("error-shake");
+        }
+
+        function submitCode() {
+            if (!timerActive) return;
+            
+            if (currentCode === CORRECT_CODE) {
+                endGame(true);
+            } else {
+                beep(100, 'sawtooth', 0.4);
+                msgEl.innerText = "CODICE ERRATO";
+                currentCode = "";
+                displayEl.innerText = "";
+                
+                displayEl.classList.add("error-shake");
+                setTimeout(() => displayEl.classList.remove("error-shake"), 500);
+            }
+        }
+
+        function endGame(win) {
+            clearInterval(timerInterval);
+            timerActive = false;
+            if (win) {
+                beep(600, 'sine', 0.1); setTimeout(()=>beep(1200,'sine',0.4), 100);
+                document.getElementById('overlay-safe').classList.remove('hidden');
+            } else {
+                beep(100, 'sawtooth', 2);
+                poisonEl.style.height = "100%";
+                document.getElementById('overlay-boom').classList.remove('hidden');
+            }
+        }
+
+        // GENERATORE SUONI
+        function beep(freq, type, dur) {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.value = 0.1;
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + dur);
+            } catch(e) {}
+        }
+    </script>
+</body>
+</html>
