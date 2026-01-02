@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dispositivo di Sicurezza Sonoro</title>
+    <title>Dispositivo di Sicurezza - Poison Protocol</title>
     <style>
+        /* --- SFONDO E EFFETTO VELENO --- */
         body {
-            background-color: #111;
+            background-color: #111; /* Sfondo base scuro */
             color: #fff;
             font-family: 'Courier New', Courier, monospace;
             display: flex;
@@ -15,23 +16,43 @@
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            user-select: none; /* Evita la selezione del testo cliccando veloce */
+            user-select: none;
+            position: relative; /* Necessario per posizionare il veleno */
+            /* Variabile CSS che controlleremo con JS per l'altezza del veleno */
+            --poison-height: 0%; 
         }
 
-        /* Contenitore principale: rettangolare verticale */
+        /* Lo strato del "Veleno" */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--poison-height); /* L'altezza è dinamica */
+            /* Sfumatura verde tossico */
+            background: linear-gradient(to bottom, rgba(15, 56, 15, 0.9) 0%, rgba(42, 122, 42, 0.8) 100%);
+            z-index: 0; /* Sta dietro il tastierino ma davanti allo sfondo nero */
+            transition: height 1s linear; /* Scende fluidamente ogni secondo */
+            pointer-events: none; /* Non blocca i click */
+            box-shadow: 0 5px 20px rgba(0, 255, 0, 0.3); /* Un leggero bagliore tossico sul bordo inferiore */
+        }
+
+        /* --- CONTENITORE TASTIERINO --- */
         .container {
             background-color: #2a2a2a;
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
             border: 4px solid #444;
-            width: 280px; /* Stretto */
+            width: 280px;
             display: flex;
             flex-direction: column;
             gap: 15px;
+            position: relative;
+            z-index: 10; /* Deve stare sopra il veleno */
         }
 
-        /* Intestazione decorativa */
         .header-label {
             text-align: center;
             font-size: 0.8rem;
@@ -43,17 +64,18 @@
             margin-bottom: 5px;
         }
 
-        /* Display del Timer */
+        /* Timer con sfondo modificabile */
         #timer {
             font-size: 3.2rem;
             color: #ff0000;
             text-align: center;
-            background: #000;
+            background-color: #000;
             padding: 10px 0;
             border: 2px solid #555;
             border-radius: 4px;
             text-shadow: 0 0 10px #ff0000;
             font-weight: bold;
+            transition: background-color 0.2s, color 0.2s;
         }
 
         /* Display del Codice */
@@ -69,16 +91,20 @@
             letter-spacing: 4px;
             overflow: hidden;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            transition: background-color 0.2s;
         }
 
-        /* Griglia Tastierino */
+        .display-error {
+            background-color: #500 !important;
+            color: #fff !important;
+        }
+
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
         }
 
-        /* Tasti: Rettangoli orizzontali */
         button {
             background: linear-gradient(180deg, #444, #333);
             border: 1px solid #222;
@@ -98,7 +124,6 @@
             background: #222;
         }
 
-        /* Colori tasti speciali */
         .btn-clear {
             background: linear-gradient(180deg, #d4a017, #b8860b);
             color: #000;
@@ -106,17 +131,14 @@
             box-shadow: 0 3px 0 #684a04;
             border: 1px solid #684a04;
         }
-        .btn-clear:active { box-shadow: 0 0 0 #684a04; }
-
+        
         .btn-enter {
             background: linear-gradient(180deg, #2e8b57, #1e5b39);
             color: #fff;
             box-shadow: 0 3px 0 #0f381e;
             border: 1px solid #0f381e;
         }
-        .btn-enter:active { box-shadow: 0 0 0 #0f381e; }
-        
-        /* Messaggi di stato */
+
         #message {
             text-align: center;
             height: 20px;
@@ -126,7 +148,6 @@
             margin-top: -5px;
         }
 
-        /* Animazione Errore */
         .shake { animation: shake 0.4s; }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
@@ -158,7 +179,7 @@
 <body>
 
     <div class="container" id="bombbox">
-        <div class="header-label">System Locked</div>
+        <div class="header-label">Protocollo Attivo</div>
         <div id="timer">15:00</div>
         <div id="display"></div>
         <div id="message"></div>
@@ -180,50 +201,46 @@
     </div>
 
     <div id="overlay-boom" class="overlay boom">
-        <div style="font-size: 5rem; font-weight:bold;">BOOM!</div>
-        <div style="font-size: 2rem; margin-top:20px;">CONNESSIONE PERSA</div>
+        <div style="font-size: 5rem; font-weight:bold;">CONTAMINAZIONE</div>
+        <div style="font-size: 2rem; margin-top:20px;">Tempo Scaduto</div>
     </div>
     
     <div id="overlay-safe" class="overlay safe">
-        <div style="font-size: 4rem; font-weight:bold;">SBLOCCATO</div>
-        <div style="font-size: 1.5rem; margin-top:20px;">SISTEMA SICURO</div>
+        <div style="font-size: 4rem; font-weight:bold;">DISINNESCATO</div>
+        <div style="font-size: 1.5rem; margin-top:20px;">Area Sicura</div>
     </div>
 
     <script>
-        // --- CONFIGURAZIONE ---
+        // --- CONFIGURAZIONE TEMPO ---
+        const TOTAL_TIME_MINUTES = 15;
+        // Calcoliamo i secondi totali per sapere la percentuale
+        const TOTAL_TIME_SECONDS = TOTAL_TIME_MINUTES * 60; 
+        let timeRemaining = TOTAL_TIME_SECONDS;
+        
         const CORRECT_CODE = "34542424";
-        let timeRemaining = 15 * 60; 
         // ----------------------
 
         let currentInput = "";
         let timerInterval;
         let isGameActive = true;
         
-        // --- SISTEMA AUDIO ---
+        // --- AUDIO ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
 
-        // Sblocca l'audio al primo click sulla pagina (policy dei browser)
         document.body.addEventListener('click', function() {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }, { once: true });
 
         function playTone(freq, type, duration) {
             const osc = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
-            
             osc.type = type;
             osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            
-            // Volume
             gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-
             osc.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-            
             osc.start();
             osc.stop(audioCtx.currentTime + duration);
         }
@@ -239,13 +256,10 @@
             setTimeout(() => playTone(1200, 'sine', 0.4), 200);
         }
         function playExplosionSound() {
-            // Simulazione rumore bianco grezzo per l'esplosione
-            const bufferSize = audioCtx.sampleRate * 2; // 2 secondi
+            const bufferSize = audioCtx.sampleRate * 2; 
             const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
             const data = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = Math.random() * 2 - 1;
-            }
+            for (let i = 0; i < bufferSize; i++) { data[i] = Math.random() * 2 - 1; }
             const noise = audioCtx.createBufferSource();
             noise.buffer = buffer;
             const gain = audioCtx.createGain();
@@ -256,7 +270,6 @@
         }
 
         // --- LOGICA GIOCO ---
-
         const displayElement = document.getElementById('display');
         const timerElement = document.getElementById('timer');
         const messageElement = document.getElementById('message');
@@ -269,7 +282,8 @@
                 } else {
                     timeRemaining--;
                     updateTimerDisplay();
-                    // Beep negli ultimi 10 secondi
+                    
+                    // Suono beep negli ultimi 10 secondi
                     if (timeRemaining < 10 && timeRemaining > 0) {
                         playTone(1000, 'sine', 0.05);
                     }
@@ -283,63 +297,6 @@
             timerElement.textContent = 
                 `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             
-            if (timeRemaining < 60) {
-                timerElement.style.color = (timeRemaining % 2 === 0) ? "#ff0000" : "#fff";
-            }
-        }
-
-        function press(num) {
-            if (!isGameActive) return;
-            playBeep();
-            if (currentInput.length < 12) {
-                currentInput += num;
-                updateDisplay();
-            }
-        }
-
-        function clearInput() {
-            if (!isGameActive) return;
-            playTone(400, 'square', 0.1); // Suono diverso per Cancel
-            currentInput = "";
-            updateDisplay();
-            messageElement.textContent = "";
-        }
-
-        function updateDisplay() {
-            displayElement.textContent = currentInput; 
-        }
-
-        function checkCode() {
-            if (!isGameActive) return;
-
-            if (currentInput === CORRECT_CODE) {
-                gameWin();
-            } else {
-                playErrorSound();
-                messageElement.textContent = "ACCESSO NEGATO";
-                currentInput = "";
-                updateDisplay();
-                bombBox.classList.add("shake");
-                setTimeout(() => bombBox.classList.remove("shake"), 500);
-            }
-        }
-
-        function gameOver() {
-            clearInterval(timerInterval);
-            isGameActive = false;
-            playExplosionSound();
-            document.getElementById('overlay-boom').style.display = 'flex';
-        }
-
-        function gameWin() {
-            clearInterval(timerInterval);
-            isGameActive = false;
-            playSuccessSound();
-            document.getElementById('overlay-safe').style.display = 'flex';
-        }
-
-        startTimer();
-
-    </script>
-</body>
-</html>
+            // --- CALCOLO EFFETTO VELENO ---
+            // Calcola quanto tempo è passato
+            const timeElapsed = TOTAL_TIME_SECONDS -
