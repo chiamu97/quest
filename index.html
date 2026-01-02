@@ -3,62 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accesso Riservato</title>
+    <title>Protocollo Antidoto</title>
     <style>
-        body { background-color: #1a1a1a; color: #fff; font-family: 'Courier New', Courier, monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; user-select: none; }
+        body { 
+            background-color: #1a1a1a; 
+            color: #fff; 
+            font-family: 'Courier New', Courier, monospace; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden; 
+            user-select: none; 
+            position: relative; /* Necessario per il livello di riempimento */
+        }
+
+        /* IL LIVELLO CHE SI RIEMPIE DI COLORE */
+        #poison-layer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0%; /* Parte da 0 */
+            background-color: #39ff14; /* Verde Tossico 2005 */
+            opacity: 0.6; /* Un po' trasparente */
+            z-index: 1; /* Sta sotto al tastierino */
+            transition: height 1s linear;
+        }
+
         #start-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         #start-btn { padding: 20px 40px; font-size: 24px; background: #2ea44f; color: white; border: none; border-radius: 10px; cursor: pointer; margin-top: 20px; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        #timer-container { font-size: 2em; margin-bottom: 20px; border: 2px solid #fff; padding: 10px 20px; background: #000; color: #0f0; }
+        
+        #timer-container { 
+            font-size: 2em; 
+            margin-bottom: 20px; 
+            border: 2px solid #fff; 
+            padding: 10px 20px; 
+            background: #000; 
+            color: #0f0; 
+            position: relative; 
+            z-index: 10; /* Sta sopra il verde */
+        }
+        
         .timer-panic { color: red !important; border-color: red !important; animation: blink 0.5s infinite; }
         @keyframes blink { 50% { opacity: 0; } }
-        #lock-screen { text-align: center; background: #2b2b2b; padding: 20px; border-radius: 15px; box-shadow: 0 0 20px rgba(0,0,0,0.7); z-index: 10; }
+        
+        #lock-screen { 
+            text-align: center; 
+            background: rgba(43, 43, 43, 0.9); /* Sfondo scuro semitrasparente per leggere i tasti */
+            padding: 20px; 
+            border-radius: 15px; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.7); 
+            z-index: 10; /* Sta sopra il verde */
+            border: 1px solid #555;
+        }
+        
         input { font-size: 24px; text-align: center; padding: 10px; width: 80%; margin-bottom: 15px; background-color: #000; color: #0f0; border: 2px solid #555; letter-spacing: 5px; }
         .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 260px; margin: 0 auto; }
         button { padding: 15px; font-size: 20px; background-color: #444; color: white; border: none; border-radius: 5px; cursor: pointer; touch-action: manipulation; }
         button:active { background-color: #666; transform: translateY(2px); }
         #enter-btn { background-color: #2ea44f; grid-column: span 3; }
-        #secret-content { display: none; text-align: center; max-width: 600px; padding: 20px; border: 2px dashed #2ea44f; animation: fadeIn 2s; }
+        
+        #secret-content { 
+            display: none; 
+            text-align: center; 
+            max-width: 600px; 
+            padding: 20px; 
+            border: 2px dashed #2ea44f; 
+            animation: fadeIn 2s; 
+            background: rgba(0,0,0,0.8);
+            z-index: 20; 
+            position: relative;
+        }
+        
         #game-over { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: black; color: red; flex-direction: column; align-items: center; justify-content: center; z-index: 20; text-align: center; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
+
+    <div id="poison-layer"></div>
+
     <div id="start-overlay">
-        <h1>🔐 SISTEMA DI SICUREZZA</h1>
-        <p>Toccare per avviare il terminale</p>
+        <h1>☣️ LIVELLO TOSSICITÀ</h1>
+        <p>Toccare per avviare il protocollo</p>
         <button id="start-btn" onclick="initGame()">AVVIA SISTEMA</button>
     </div>
-    <div id="timer-container" style="display:none;">TEMPO: <span id="time-display">15:00</span></div>
+
+    <div id="timer-container" style="display:none;">TEMPO: <span id="time-display">05:00</span></div>
+
     <div id="lock-screen" style="display:none;">
-        <h2>DISPOSITIVO DI CHIARA</h2>
+        <h2>SALVA GOFFREDO</h2>
         <input type="text" id="display" readonly placeholder="----">
         <div class="keypad">
             <button onclick="pressKey('1')">1</button><button onclick="pressKey('2')">2</button><button onclick="pressKey('3')">3</button>
             <button onclick="pressKey('4')">4</button><button onclick="pressKey('5')">5</button><button onclick="pressKey('6')">6</button>
             <button onclick="pressKey('7')">7</button><button onclick="pressKey('8')">8</button><button onclick="pressKey('9')">9</button>
             <button onclick="clearDisplay()" style="background-color: #d73a49;">C</button><button onclick="pressKey('0')">0</button>
-            <button id="enter-btn" onclick="checkCode()">SBLOCCA</button>
+            <button id="enter-btn" onclick="checkCode()">SOMMINISTRA</button>
         </div>
     </div>
+
     <div id="secret-content">
-        <h1>🔓 ACCESSO CONSENTITO</h1><hr>
-        <p style="font-size: 1.2em; line-height: 1.6;">"Se leggete questo messaggio, è troppo tardi.<br><br>Il colpevole mente sull'orario del suo arrivo.<br>Cercate l'agenda rossa."</p>
+        <h1>✅ ANTIDOTO ATTIVATO</h1><hr>
+        <p style="font-size: 1.2em; line-height: 1.6;">"Goffredo è salvo.<br><br>Il veleno è stato neutralizzato.<br>Codice accettato."</p>
     </div>
-    <div id="game-over"><h1 style="font-size: 3em;">⚠️ ERROR ⚠️</h1><p>DATI PERSI</p></div>
+
+    <div id="game-over"><h1 style="font-size: 3em;">⚠️ ERROR ⚠️</h1><p>PAZIENTE PERSO</p></div>
+
     <script>
-        const CODICE_SEGRETO = "1985"; const MINUTI = 15; 
-        let audioCtx, tempoRimanente = MINUTI * 60, timerInterval, currentInput = "";
-        const display = document.getElementById('display'), timeDisplay = document.getElementById('time-display');
+        // CONFIGURAZIONE
+        const CODICE_SEGRETO = "1985"; 
+        const MINUTI = 5; // Ho messo 5 minuti per test, cambia se vuoi
+        
+        // VARIABILI SISTEMA
+        let audioCtx;
+        let tempoTotaleSecondi = MINUTI * 60;
+        let tempoRimanente = tempoTotaleSecondi;
+        let timerInterval;
+        let currentInput = "";
+        
+        const display = document.getElementById('display');
+        const timeDisplay = document.getElementById('time-display');
+        const poisonLayer = document.getElementById('poison-layer');
+
         function initAudio() { if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } if (audioCtx.state === 'suspended') audioCtx.resume(); }
         function playTone(f,t,d) { if (!audioCtx) return; const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.type=t; o.frequency.setValueAtTime(f,audioCtx.currentTime); g.gain.setValueAtTime(0.1,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.00001,audioCtx.currentTime+d); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+d); }
-        function initGame() { initAudio(); playTone(1000,'sine',0.5); document.getElementById('start-overlay').style.display='none'; document.getElementById('timer-container').style.display='block'; document.getElementById('lock-screen').style.display='block'; startTimer(); }
-        function startTimer() { timerInterval = setInterval(() => { tempoRimanente--; let m=Math.floor(tempoRimanente/60), s=tempoRimanente%60; timeDisplay.innerText = `${m<10?"0"+m:m}:${s<10?"0"+s:s}`; if(tempoRimanente<60) document.getElementById('timer-container').classList.add('timer-panic'); if(tempoRimanente<=0) { clearInterval(timerInterval); triggerGameOver(); } }, 1000); }
-        function triggerGameOver() { setInterval(() => { playTone(400,'sawtooth',0.5); setTimeout(()=>playTone(300,'sawtooth',0.5),400); }, 800); document.getElementById('lock-screen').style.display='none'; document.getElementById('timer-container').style.display='none'; document.getElementById('game-over').style.display='flex'; }
+        
+        function initGame() { 
+            initAudio(); 
+            playTone(1000,'sine',0.5); 
+            document.getElementById('start-overlay').style.display='none'; 
+            document.getElementById('timer-container').style.display='block'; 
+            document.getElementById('lock-screen').style.display='block'; 
+            
+            // Setta il display iniziale corretto
+            let m=Math.floor(tempoRimanente/60), s=tempoRimanente%60;
+            timeDisplay.innerText = `${m<10?"0"+m:m}:${s<10?"0"+s:s}`;
+            
+            startTimer(); 
+        }
+
+        function startTimer() { 
+            timerInterval = setInterval(() => { 
+                tempoRimanente--; 
+                
+                // Aggiorna Testo Timer
+                let m=Math.floor(tempoRimanente/60), s=tempoRimanente%60; 
+                timeDisplay.innerText = `${m<10?"0"+m:m}:${s<10?"0"+s:s}`; 
+                
+                // AGGIUNTA: Calcolo percentuale riempimento sfondo
+                let timeElapsed = tempoTotaleSecondi - tempoRimanente;
+                let percentage = (timeElapsed / tempoTotaleSecondi) * 100;
+                poisonLayer.style.height = percentage + "%";
+
+                // Gestione Panico e Fine
+                if(tempoRimanente < 60) document.getElementById('timer-container').classList.add('timer-panic'); 
+                if(tempoRimanente <= 0) { 
+                    clearInterval(timerInterval); 
+                    triggerGameOver(); 
+                } 
+            }, 1000); 
+        }
+
+        function triggerGameOver() { 
+            // Sfondo diventa Rosso pieno
+            poisonLayer.style.backgroundColor = "red";
+            poisonLayer.style.height = "100%";
+            
+            setInterval(() => { playTone(400,'sawtooth',0.5); setTimeout(()=>playTone(300,'sawtooth',0.5),400); }, 800); 
+            document.getElementById('lock-screen').style.display='none'; 
+            document.getElementById('timer-container').style.display='none'; 
+            document.getElementById('game-over').style.display='flex'; 
+        }
+
         function pressKey(n) { playTone(800,'square',0.1); if(currentInput.length<6) { currentInput+=n; updateDisplay(); } }
         function clearDisplay() { playTone(800,'square',0.1); currentInput=""; updateDisplay(); }
         function updateDisplay() { display.value=currentInput; }
-        function checkCode() { if(currentInput===CODICE_SEGRETO) { clearInterval(timerInterval); playTone(600,'sine',0.2); setTimeout(()=>playTone(800,'sine',0.2),200); document.getElementById('lock-screen').style.display='none'; document.getElementById('timer-container').style.display='none'; document.getElementById('secret-content').style.display='block'; } else { playTone(150,'sawtooth',0.4); alert("PIN ERRATO!"); clearDisplay(); } }
+        
+        function checkCode() { 
+            if(currentInput===CODICE_SEGRETO) { 
+                clearInterval(timerInterval); 
+                playTone(600,'sine',0.2); 
+                setTimeout(()=>playTone(800,'sine',0.2),200); 
+                
+                // VITTORIA: Lo sfondo diventa Blu e si svuota (o riempie, a scelta)
+                poisonLayer.style.transition = "background-color 1s";
+                poisonLayer.style.backgroundColor = "#0055EA"; // Blu Windows XP
+                
+                document.getElementById('lock-screen').style.display='none'; 
+                document.getElementById('timer-container').style.display='none'; 
+                document.getElementById('secret-content').style.display='block'; 
+            } else { 
+                playTone(150,'sawtooth',0.4); 
+                alert("CODICE ERRATO - LIVELLO TOSSICO IN AUMENTO"); 
+                clearDisplay(); 
+                // Opzionale: togliere 30 secondi se sbagliano?
+                // tempoRimanente -= 30;
+            } 
+        }
     </script>
 </body>
 </html>
