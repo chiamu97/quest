@@ -20,17 +20,43 @@
             --poison-height: 0%; 
         }
 
-        /* SFONDO VELENO */
+        /* --- SFONDO VELENO ONDULATO --- */
         body::before {
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%;
+            /* L'altezza è controllata dal timer */
             height: var(--poison-height);
-            background: linear-gradient(to bottom, rgba(15, 56, 15, 0.95) 0%, rgba(42, 122, 42, 0.8) 100%);
             z-index: 0;
             transition: height 1s linear;
             pointer-events: none;
+
+            /* QUI C'È LA MAGIA DELL'ONDA */
+            /* Usiamo due immagini di sfondo sovrapposte: */
+            background-image: 
+                /* 1. L'onda in cima (SVG codificato direttamente nel CSS) */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z' fill='%230f380f' opacity='0.95' /%3E%3C/svg%3E"),
+                /* 2. Il colore solido sotto */
+                linear-gradient(to bottom, rgba(15, 56, 15, 0.95) 0%, rgba(42, 122, 42, 0.8) 100%);
+            
+            /* Dimensioni: L'onda è larga 200% (per l'animazione) e alta 50px. Il gradiente riempie tutto. */
+            background-size: 200% 50px, 100% 100%;
+            /* L'onda si ripete in orizzontale, il gradiente no */
+            background-repeat: repeat-x, no-repeat;
+            /* Posizione: L'onda sta in BASSO al box che cresce. Il gradiente riempie dall'ALTO. */
+            background-position: left bottom, left top;
+
+            /* Animazione orizzontale dell'onda */
+            animation: waveAnim 8s linear infinite;
         }
+
+        /* Definizione dell'animazione che muove l'onda orizzontalmente */
+        @keyframes waveAnim {
+            from { background-position-x: 0, 0; }
+            to { background-position-x: -200%, 0; }
+        }
+        /* --------------------------- */
+
 
         /* BOX PRINCIPALE */
         .container {
@@ -89,11 +115,6 @@
         }
         .boom { background-color: #aa0000; color: #fff; }
         .safe { background-color: #2e8b57; color: #fff; }
-    </script>
-    <style>
-        /* CSS Animazioni Extra */
-        @keyframes flash { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .flashing { animation: flash 0.5s infinite; }
     </style>
 </head>
 <body>
@@ -202,7 +223,7 @@
             const s = (timeLeft % 60).toString().padStart(2, '0');
             document.getElementById('timer').innerText = `${m}:${s}`;
 
-            // Veleno
+            // Calcolo altezza veleno
             const percent = ((TOTAL_TIME - timeLeft) / TOTAL_TIME) * 100;
             document.body.style.setProperty('--poison-height', `${percent}%`);
 
@@ -219,7 +240,7 @@
 
         // INPUT
         function input(n) {
-            initAudio(); // Assicura che l'audio parta
+            initAudio(); 
             if (!timerActive) return;
             beep('click');
             if (currentCode.length < 12) {
@@ -235,38 +256,3 @@
             currentCode = "";
             document.getElementById('display').innerText = "";
             document.getElementById('message').innerText = "";
-            document.getElementById('display').classList.remove("display-error");
-        }
-
-        function submitCode() {
-            initAudio();
-            if (!timerActive) return;
-            
-            if (currentCode === CORRECT_CODE) {
-                endGame(true);
-            } else {
-                beep('error');
-                document.getElementById('message').innerText = "CODICE ERRATO";
-                currentCode = "";
-                document.getElementById('display').innerText = "";
-                document.getElementById('display').classList.add("display-error");
-                setTimeout(() => document.getElementById('display').classList.remove("display-error"), 500);
-            }
-        }
-
-        function endGame(win) {
-            clearInterval(timerInterval);
-            timerActive = false;
-            
-            if (win) {
-                beep('win');
-                document.getElementById('overlay-safe').style.display = 'flex';
-            } else {
-                beep('error');
-                document.body.style.setProperty('--poison-height', '100%');
-                document.getElementById('overlay-boom').style.display = 'flex';
-            }
-        }
-    </script>
-</body>
-</html>
