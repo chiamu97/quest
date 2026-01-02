@@ -5,143 +5,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Protocollo Attivo</title>
     <style>
+        /* RESET BASE */
+        * { box-sizing: border-box; }
+        html, body { height: 100%; margin: 0; padding: 0; }
+
         body {
-            background-color: #111;
+            background-color: #000; /* Sfondo nero assoluto */
             color: #fff;
             font-family: 'Courier New', Courier, monospace;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
             overflow: hidden;
-            user-select: none;
             position: relative;
         }
 
-        /* --- IL VELENO (LIQUIDO) --- */
+        /* --- IL VELENO (Semplificato e Robusto) --- */
         #poison {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 0%; /* Questa percentuale aumenterà col timer */
-            
-            /* Sfumatura verde tossico verticale */
-            background: linear-gradient(to bottom, #0a2e0a 0%, #1e5b1e 100%);
-            
-            z-index: 1; /* Sopra lo sfondo nero, ma sotto la bomba */
+            height: 0%; /* Parte da 0 e scende */
+            background: linear-gradient(to bottom, #0a3a0a 0%, #1e6b1e 100%);
+            z-index: 1; /* Livello 1: Sopra lo sfondo */
             transition: height 1s linear;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            opacity: 0.8;
         }
 
-        /* --- L'ONDA SUL BORDO INFERIORE DEL VELENO --- */
+        /* ONDA "CSS PURA" (Senza immagini che si rompono) */
         #poison::after {
-            content: '';
+            content: "";
             position: absolute;
-            
-            /* Si attacca al fondo del liquido verde */
-            bottom: -40px; 
+            bottom: -20px; /* Sporge sotto il veleno */
             left: 0;
             width: 100%;
-            height: 40px; /* Altezza dell'onda */
-            
-            /* Disegno dell'onda tramite SVG codificato */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z' fill='%231e5b1e'/%3E%3C/svg%3E");
-            
-            background-size: 200% 100%; /* Larghezza doppia per animazione fluida */
-            background-repeat: repeat-x;
-            
-            /* Animazione che muove l'onda */
-            animation: waveFlow 6s linear infinite;
+            height: 20px;
+            background: #1e6b1e; /* Stesso colore della fine del veleno */
+            border-radius: 0 0 50% 50% / 0 0 100% 100%; /* Curvatura semplice */
+            box-shadow: 0 0 20px #0f0;
         }
 
-        @keyframes waveFlow {
-            0% { background-position-x: 0; }
-            100% { background-position-x: -200%; }
-        }
-
-        /* --- DESIGN DELLA BOMBA --- */
+        /* --- IL TASTIERINO --- */
         .container {
+            position: relative;
+            z-index: 10; /* Livello 10: Sopra il veleno */
             background-color: #222;
-            padding: 25px;
-            border-radius: 6px;
-            /* Ombra forte per staccarlo dallo sfondo verde */
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 1); 
-            border: 5px solid #333;
+            padding: 20px;
+            border-radius: 8px;
+            border: 4px solid #444;
+            box-shadow: 0 0 50px #000; /* Ombra forte per staccarlo dal verde */
             width: 280px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            position: relative;
-            z-index: 10; /* DEVE ESSERE PIU ALTO DI z-index DEL VELENO */
+            gap: 10px;
         }
 
         .header-label {
-            text-align: center; font-size: 0.9rem; color: #888;
-            text-transform: uppercase; letter-spacing: 2px;
-            border-bottom: 2px solid #444; padding-bottom: 8px;
+            text-align: center; color: #888; text-transform: uppercase;
+            border-bottom: 2px solid #555; padding-bottom: 5px; margin-bottom: 5px;
         }
 
         #timer {
-            font-size: 3.5rem; color: #ff0000; text-align: center;
-            background-color: #000; padding: 10px 0;
-            border: 3px solid #555; border-radius: 4px;
-            text-shadow: 0 0 10px #ff0000; font-weight: bold;
+            font-size: 3.5rem; color: #f00; text-align: center;
+            background: #000; padding: 10px; border: 2px solid #555;
+            font-weight: bold; text-shadow: 0 0 10px #f00;
         }
 
         #display {
-            background-color: #0f380f; color: #00ff00;
-            font-size: 1.5rem; height: 50px; line-height: 50px;
-            text-align: center; border: 3px inset #555; border-radius: 4px;
-            letter-spacing: 4px; overflow: hidden;
+            background: #030; color: #0f0; font-size: 1.5rem;
+            height: 50px; line-height: 50px; text-align: center;
+            border: 2px inset #555; letter-spacing: 5px; overflow: hidden;
         }
-        .display-error { background-color: #500 !important; color: #fff !important; }
+        .display-error { background: #500 !important; color: #fff !important; }
 
-        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
 
         button {
-            background: linear-gradient(180deg, #3a3a3a, #2a2a2a);
-            border: 1px solid #444; color: #eee;
-            font-size: 1.4rem; padding: 15px 0; border-radius: 4px;
-            cursor: pointer; box-shadow: 0 4px 0 #111;
+            background: #333; color: #fff; border: 1px solid #555;
+            font-size: 1.5rem; padding: 15px 0; cursor: pointer;
         }
-        button:active { transform: translateY(4px); box-shadow: 0 0 0 #111; }
+        button:active { background: #555; }
 
-        .btn-clear { background: linear-gradient(180deg, #d4a017, #b8860b); color: #000; border-color: #8b6508; }
-        .btn-enter { background: linear-gradient(180deg, #2e8b57, #1e5b39); color: #fff; border-color: #1e5b39; }
+        .btn-clear { background: #dba800; color: #000; }
+        .btn-enter { background: #00802b; }
 
-        #message { text-align: center; height: 20px; font-weight: bold; color: #ff4444; margin-top: -5px; }
+        #message { text-align: center; height: 20px; color: #f44; font-weight: bold; }
 
-        /* --- OVERLAYS --- */
+        /* --- OVERLAYS (Schermate intere) --- */
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; justify-content: center; align-items: center;
-            flex-direction: column; z-index: 100; text-align: center;
+            background: rgba(0,0,0,0.95);
+            z-index: 999; /* Livello massimo */
+            display: flex; /* CENTRAGGIO FORZATO */
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
         }
-        
-        #overlay-start { background-color: rgba(0,0,0,0.95); z-index: 200; }
+
         .btn-start {
-            background-color: #00ff00; color: black; padding: 20px 40px;
-            font-size: 1.5rem; border: none; cursor: pointer; font-weight: bold;
-            box-shadow: 0 0 20px #00ff00; text-transform: uppercase;
+            padding: 20px 40px; font-size: 1.5rem; background: #0f0; border: none;
+            cursor: pointer; font-weight: bold; text-transform: uppercase;
+            box-shadow: 0 0 20px #0f0;
         }
 
         .hidden { display: none !important; }
-        .boom { background-color: #aa0000; color: #fff; }
-        .safe { background-color: #2e8b57; color: #fff; }
-    </script>
+        .boom { background: #800; }
+        .safe { background: #060; }
+
+        h1 { margin: 10px 0; font-size: 2.5rem; }
+    </style>
 </head>
 <body>
 
     <div id="poison"></div>
 
     <div id="overlay-start" class="overlay">
-        <h1 style="color: #00ff00; margin-bottom: 20px; font-family: monospace;">SYSTEM BOOT</h1>
-        <button class="btn-start" onclick="initGame()">AVVIA PROTOCOLLO</button>
+        <h1 style="color: #0f0;">SISTEMA PRONTO</h1>
+        <p style="color: #ccc; margin-bottom: 20px;">Tocca il pulsante per iniziare</p>
+        <button class="btn-start" onclick="initGame()">AVVIA TIMER</button>
     </div>
 
-    <div class="container" id="bombbox">
+    <div class="container">
         <div class="header-label">System Locked</div>
         <div id="timer">15:00</div>
         <div id="display"></div>
@@ -164,18 +150,18 @@
     </div>
 
     <div id="overlay-boom" class="overlay boom hidden">
-        <h1 style="font-size: 3rem;">CONTAMINAZIONE TOTALE</h1>
-        <h2>TEMPO SCADUTO</h2>
+        <h1>VELENO RILASCIATO</h1>
+        <h2>SEI MORTA</h2>
     </div>
-    
     <div id="overlay-safe" class="overlay safe hidden">
-        <h1 style="font-size: 3rem;">SALVATI</h1>
-        <h2>CODICE ACCETTATO</h2>
+        <h1>SISTEMA SICURO</h1>
+        <h2>OTTIMO LAVORO</h2>
     </div>
 
     <script>
+        // CONFIGURAZIONE
         const CORRECT_CODE = "34542424";
-        const TOTAL_TIME = 15 * 60; 
+        const TOTAL_TIME = 15 * 60; // 15 minuti
         
         let timeLeft = TOTAL_TIME;
         let currentCode = "";
@@ -183,44 +169,27 @@
         let timerInterval;
         let audioCtx = null;
 
-        const displayEl = document.getElementById('display');
-        const timerEl = document.getElementById('timer');
-        const msgEl = document.getElementById('message');
+        // ELEMENTI
         const poisonEl = document.getElementById('poison');
+        const timerEl = document.getElementById('timer');
+        const displayEl = document.getElementById('display');
+        const msgEl = document.getElementById('message');
 
+        // AVVIO
         function initGame() {
             document.getElementById('overlay-start').classList.add('hidden');
+            
+            // Attiva Audio
             try {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 audioCtx.resume();
             } catch(e) {}
+
             timerActive = true;
             startTimer();
         }
 
-        function beep(type) {
-            if (!audioCtx) return; 
-            try {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                if (type === 'click') {
-                    osc.type = 'square'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-                } else if (type === 'error') {
-                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-                } else if (type === 'win') {
-                    osc.type = 'sine'; osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.2);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-                }
-                osc.connect(gain); gain.connect(audioCtx.destination);
-            } catch(e) {}
-        }
-
+        // TIMER
         function startTimer() {
             timerInterval = setInterval(() => {
                 if (timeLeft <= 0) {
@@ -233,23 +202,48 @@
         }
 
         function updateScreen() {
+            // Tempo
             const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
             const s = (timeLeft % 60).toString().padStart(2, '0');
             timerEl.innerText = `${m}:${s}`;
 
-            // Aggiorna l'altezza del veleno (dall'alto verso il basso)
+            // Veleno (calcolo percentuale)
             const percent = ((TOTAL_TIME - timeLeft) / TOTAL_TIME) * 100;
             poisonEl.style.height = `${percent}%`;
 
+            // Panico (Colori timer)
             if (timeLeft < 60) {
-                if (timeLeft % 2 === 0) {
-                    timerEl.style.backgroundColor = "#a00"; timerEl.style.color = "black";
-                } else {
-                    timerEl.style.backgroundColor = "black"; timerEl.style.color = "red";
-                }
+                timerEl.style.backgroundColor = (timeLeft % 2 === 0) ? "#a00" : "#000";
+                timerEl.style.color = (timeLeft % 2 === 0) ? "#000" : "#f00";
             }
         }
 
+        // AUDIO
+        function beep(type) {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+
+                if (type === 'click') {
+                    osc.type = 'square'; osc.frequency.value = 800;
+                    gain.gain.value = 0.05;
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth'; osc.frequency.value = 150;
+                    gain.gain.value = 0.2;
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'win') {
+                    osc.type = 'sine'; osc.frequency.value = 600;
+                    gain.gain.value = 0.2;
+                    osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.2);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+                }
+            } catch(e) {}
+        }
+
+        // INPUT UTENTE
         function input(n) {
             if (!timerActive) return;
             beep('click');
@@ -270,12 +264,11 @@
 
         function submitCode() {
             if (!timerActive) return;
-            
             if (currentCode === CORRECT_CODE) {
                 endGame(true);
             } else {
                 beep('error');
-                msgEl.innerText = "CODICE ERRATO";
+                msgEl.innerText = "ERRORE";
                 currentCode = "";
                 displayEl.innerText = "";
                 displayEl.classList.add("display-error");
@@ -286,13 +279,12 @@
         function endGame(win) {
             clearInterval(timerInterval);
             timerActive = false;
-            
             if (win) {
                 beep('win');
                 document.getElementById('overlay-safe').classList.remove('hidden');
             } else {
                 beep('error');
-                poisonEl.style.height = '100%'; // Tutto verde
+                poisonEl.style.height = "100%";
                 document.getElementById('overlay-boom').classList.remove('hidden');
             }
         }
