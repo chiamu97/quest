@@ -5,219 +5,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Failure</title>
     <style>
+        /* RESET E BASI */
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             background-color: #050505;
             color: white;
             font-family: 'Courier New', Courier, monospace;
-            height: 100vh;
-            width: 100vw;
+            height: 100vh; width: 100vw;
             overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
             position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
-        /* --- IL VELENO (NON TOCCATO) --- */
+        /* --- IL VELENO (SOTTOFONDO) --- */
         #poison-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 0%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 0%;
             background: linear-gradient(180deg, #001a00 0%, #004d00 100%);
             z-index: 1;
             transition: height 1s linear;
         }
 
         .waves-box {
-            position: absolute;
-            bottom: -50px;
-            width: 100%;
-            height: 50px;
-            z-index: 2;
-            transform: rotate(180deg);
+            position: absolute; bottom: -50px; width: 100%; height: 50px;
+            z-index: 2; transform: rotate(180deg);
+            pointer-events: none;
         }
 
-        .parallax > use {
-            animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite;
-        }
-        .parallax > use:nth-child(1) {
-            animation-delay: -2s;
-            animation-duration: 7s;
-            fill: rgba(0, 255, 0, 0.7);
-        }
-        .parallax > use:nth-child(2) {
-            animation-delay: -3s;
-            animation-duration: 10s;
-            fill: rgba(0, 100, 0, 0.5);
-        }
-        .parallax > use:nth-child(3) {
-            animation-delay: -4s;
-            animation-duration: 13s;
-            fill: #004d00;
-        }
+        /* Animazione Onde */
+        .parallax > use { animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite; }
+        .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; fill: rgba(0, 255, 0, 0.7); }
+        .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; fill: rgba(0, 100, 0, 0.5); }
+        .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; fill: #004d00; }
+        @keyframes move-forever { 0% { transform: translate3d(-90px,0,0); } 100% { transform: translate3d(85px,0,0); } }
 
-        @keyframes move-forever {
-            0% { transform: translate3d(-90px,0,0); }
-            100% { transform: translate3d(85px,0,0); }
-        }
-
-        /* --- IL TASTIERINO (LAYOUT MODIFICATO) --- */
+        /* --- TASTIERINO (DESIGN ARROTONDATO ORIZZONTALE) --- */
         .panel {
-            position: relative;
-            z-index: 999;
+            position: relative; z-index: 100;
             background: #1a1a1a;
-            padding: 30px;
-            /* Angoli molto arrotondati */
-            border-radius: 40px; 
-            border: 4px solid #444;
-            box-shadow: 0 0 60px rgba(0,0,0,0.9);
-            
-            /* Layout Rettangolare Orizzontale */
-            width: 600px; 
-            display: flex;
-            flex-direction: row; /* Elementi affiancati */
-            align-items: center;
-            gap: 30px;
+            width: 650px; height: 320px;
+            border-radius: 50px; /* Molto arrotondato */
+            border: 6px solid #444;
+            box-shadow: 0 0 80px rgba(0,0,0,1);
+            display: flex; flex-direction: row; align-items: center; justify-content: space-between;
+            padding: 30px; gap: 30px;
         }
 
-        /* --- SEZIONE SINISTRA (TIMER) --- */
-        .left-section {
-            flex: 1;
-            background: #000;
+        /* SINISTRA: TIMER */
+        .left-box {
+            flex: 1; height: 100%;
+            background: #000; border-radius: 30px;
             border: 4px inset #333;
-            border-radius: 20px;
-            height: 250px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: inset 0 0 20px #000;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: inset 0 0 30px #000;
         }
-
         #timer {
-            font-size: 4rem; /* Timer gigante */
-            color: #ff3333;
-            font-weight: bold;
-            text-shadow: 0 0 15px #ff0000;
-            margin: 0;
+            font-size: 4.5rem; color: #ff3333; font-weight: bold;
+            text-shadow: 0 0 20px #ff0000; margin: 0;
         }
 
-        /* --- SEZIONE DESTRA (CODICE + TASTI) --- */
-        .right-section {
-            flex: 1.2;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
+        /* DESTRA: CODICE E TASTI */
+        .right-box {
+            flex: 1.2; height: 100%;
+            display: flex; flex-direction: column; gap: 15px;
         }
 
         .code-screen {
-            background: #000;
-            border: 2px inset #555;
-            border-radius: 10px;
-            padding: 5px;
-            width: 100%;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
+            background: #051a05; border: 2px inset #555; border-radius: 15px;
+            height: 60px; width: 100%;
+            display: flex; justify-content: center; align-items: center;
         }
-
         #code-display {
-            font-size: 2rem;
-            color: #33ff33;
-            letter-spacing: 8px;
-            text-shadow: 0 0 5px #0f0;
+            font-size: 2rem; color: #33ff33; letter-spacing: 6px;
+            text-shadow: 0 0 5px #0f0; font-weight: bold;
         }
 
-        /* GRIGLIA PULSANTI */
         .keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px; /* Spazio tra i cerchi */
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+            flex-grow: 1;
         }
 
-        /* PULSANTI TONDI */
         button {
-            width: 60px;  /* Larghezza fissa */
-            height: 60px; /* Altezza uguale alla larghezza */
-            border-radius: 50%; /* CERCHIO PERFETTO */
-            
+            border-radius: 50%; /* Cerchi perfetti */
             background: linear-gradient(145deg, #444, #333);
-            border: 2px solid #555;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 3px 3px 10px rgba(0,0,0,0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            border: 2px solid #555; color: white;
+            font-size: 1.5rem; font-weight: bold; cursor: pointer;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.5);
             transition: transform 0.1s;
+            display: flex; justify-content: center; align-items: center;
         }
-        
-        button:active { 
-            transform: scale(0.95);
-            background: #222;
-        }
+        button:active { transform: scale(0.95); background: #222; }
 
-        .btn-c { 
-            background: linear-gradient(145deg, #d4a017, #b8860b); 
-            color: black; 
-            border-color: #8b6508;
-        }
-        .btn-ok { 
-            background: linear-gradient(145deg, #2e8b57, #1e5b39); 
-            border-color: #1e5b39;
-        }
+        .btn-c { background: linear-gradient(145deg, #d4a017, #b8860b); color: #000; border-color: #8b6508; }
+        .btn-ok { background: linear-gradient(145deg, #2e8b57, #1e5b39); border-color: #1e5b39; }
 
-        /* Messaggi */
-        #msg {
-            text-align: center; height: 20px; font-weight: bold; font-size: 0.9rem; margin-top: -5px;
-            width: 100%;
-        }
+        /* MESSAGGI E OVERLAYS */
+        #msg { text-align: center; height: 20px; font-weight: bold; color: #ff4444; margin-top: -5px; }
 
-        /* --- OVERLAY --- */
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.98);
-            z-index: 10000;
+            background: rgba(0,0,0,0.98); z-index: 10000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             text-align: center;
         }
-        .hidden { display: none !important; }
-        
         .btn-big {
-            padding: 20px 40px; font-size: 1.5rem; background: #0f0; border: none;
-            cursor: pointer; font-weight: bold; margin-top: 20px;
-            box-shadow: 0 0 20px #0f0; text-transform: uppercase;
+            padding: 25px 60px; font-size: 2rem; background: #0f0; border: none; border-radius: 50px;
+            cursor: pointer; font-weight: bold; margin-top: 30px; text-transform: uppercase;
+            box-shadow: 0 0 30px #0f0; font-family: inherit; transition: scale 0.2s;
         }
+        .btn-big:hover { transform: scale(1.05); }
 
-        .shake { animation: shake 0.4s; background: #500 !important; color: white !important; border-radius: 10px; }
+        .shake { animation: shake 0.4s; background: #500 !important; color: white !important; }
         @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
 
-        /* Adattamento Mobile (se serve) */
-        @media (max-width: 650px) {
-            .panel { flex-direction: column; width: 90%; border-radius: 20px; }
-            .left-section { width: 100%; height: 100px; }
-            #timer { font-size: 3rem; }
-            .right-section { width: 100%; }
+        /* MEDIA QUERY PER CELLULARI (così non si rompe se lo apri da telefono) */
+        @media (max-width: 700px) {
+            .panel { flex-direction: column; width: 90%; height: auto; border-radius: 30px; }
+            .left-box { width: 100%; height: 120px; margin-bottom: 20px; }
+            .keypad { gap: 8px; }
+            button { width: 50px; height: 50px; font-size: 1.2rem; margin: 0 auto;}
         }
-
     </style>
 </head>
 <body>
 
     <div id="poison-container">
-        <svg class="waves-box" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-        viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
-            <defs>
-                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-            </defs>
+        <svg class="waves-box" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs><path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" /></defs>
             <g class="parallax">
                 <use xlink:href="#gentle-wave" x="48" y="0" />
                 <use xlink:href="#gentle-wave" x="48" y="3" />
@@ -226,34 +139,180 @@
         </svg>
     </div>
 
-    <div id="start-view" class="overlay">
-        <h1 style="color:#0f0; font-size:3rem;">SISTEMA PRONTO</h1>
-        <div style="color:#ccc;">Attesa Input Utente...</div>
-        <button class="btn-big" onclick="init()">AVVIA</button>
+    <div id="start-overlay" class="overlay">
+        <h1 style="color:#0f0; font-size:3rem; margin-bottom: 10px;">SISTEMA PRONTO</h1>
+        <div style="color:#888;">Toccare per inizializzare</div>
+        <button class="btn-big" onclick="forceStart()">AVVIA</button>
     </div>
 
     <div class="panel">
-        
-        <div class="left-section">
+        <div class="left-box">
             <div id="timer">15:00</div>
         </div>
-
-        <div class="right-section">
+        <div class="right-box">
             <div class="code-screen">
                 <div id="code-display"></div>
             </div>
             <div id="msg"></div>
-            
             <div class="keypad">
-                <button onclick="tap(1)">1</button>
-                <button onclick="tap(2)">2</button>
-                <button onclick="tap(3)">3</button>
-                <button onclick="tap(4)">4</button>
-                <button onclick="tap(5)">5</button>
-                <button onclick="tap(6)">6</button>
-                <button onclick="tap(7)">7</button>
-                <button onclick="tap(8)">8</button>
-                <button onclick="tap(9)">9</button>
+                <button onclick="press(1)">1</button>
+                <button onclick="press(2)">2</button>
+                <button onclick="press(3)">3</button>
+                <button onclick="press(4)">4</button>
+                <button onclick="press(5)">5</button>
+                <button onclick="press(6)">6</button>
+                <button onclick="press(7)">7</button>
+                <button onclick="press(8)">8</button>
+                <button onclick="press(9)">9</button>
                 <button class="btn-c" onclick="wipe()">C</button>
-                <button onclick="tap(0)">0</button>
-                <button class="btn-ok
+                <button onclick="press(0)">0</button>
+                <button class="btn-ok" onclick="check()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="end-bad" class="overlay" style="display: none; background:#800;">
+        <h1 style="font-size:3.5rem;">CONTAMINAZIONE</h1>
+        <h2>CHIARA È MORTA</h2>
+    </div>
+    <div id="end-good" class="overlay" style="display: none; background:#060;">
+        <h1 style="font-size:3.5rem;">SISTEMA SICURO</h1>
+        <h2>DISINNESCATO</h2>
+    </div>
+
+    <script>
+        const CODE = "34542424";
+        const TOTAL_MINUTES = 15;
+        let timeLeft = TOTAL_MINUTES * 60;
+        let currentInput = "";
+        let isRunning = false;
+        let timerInterval;
+        let audioCtx;
+
+        // FUNZIONE AVVIO BLINDATA
+        function forceStart() {
+            // 1. Nascondi subito l'overlay
+            document.getElementById('start-overlay').style.display = 'none';
+            
+            // 2. Prova Audio (ma se fallisce, chissene)
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                audioCtx.resume();
+            } catch(e) {
+                console.log("Audio non disponibile, ma il gioco parte lo stesso.");
+            }
+
+            // 3. Avvia Timer
+            if (!isRunning) {
+                isRunning = true;
+                timerInterval = setInterval(gameLoop, 1000);
+            }
+        }
+
+        function gameLoop() {
+            if (timeLeft > 0) {
+                timeLeft--;
+                updateDisplay();
+            } else {
+                gameOver(false);
+            }
+        }
+
+        function updateDisplay() {
+            // Timer Formattato
+            let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            let s = (timeLeft % 60).toString().padStart(2, '0');
+            let tEl = document.getElementById('timer');
+            tEl.innerText = m + ":" + s;
+
+            // Veleno (calcolo inverso: parte da 0 e arriva a 100)
+            let totalSeconds = TOTAL_MINUTES * 60;
+            let percent = ((totalSeconds - timeLeft) / totalSeconds) * 100;
+            document.getElementById('poison-container').style.height = percent + "%";
+
+            // Effetto Panico (Rosso)
+            if (timeLeft < 60) {
+                let box = document.querySelector('.left-box');
+                if (timeLeft % 2 === 0) {
+                    box.style.background = "#ff3333";
+                    tEl.style.color = "black";
+                } else {
+                    box.style.background = "black";
+                    tEl.style.color = "#ff3333";
+                    if (timeLeft < 10) playSound(800, 'square', 0.1);
+                }
+            }
+        }
+
+        function press(n) {
+            if (!isRunning) return;
+            playSound(600, 'square', 0.05);
+            if (currentInput.length < 12) {
+                currentInput += n;
+                document.getElementById('code-display').innerText = currentInput;
+            }
+        }
+
+        function wipe() {
+            if (!isRunning) return;
+            playSound(300, 'sawtooth', 0.1);
+            currentInput = "";
+            document.getElementById('code-display').innerText = "";
+            document.getElementById('msg').innerText = "";
+            document.querySelector('.code-screen').classList.remove('shake');
+        }
+
+        function check() {
+            if (!isRunning) return;
+            
+            if (currentInput === CODE) {
+                gameOver(true);
+            } else {
+                // Errore
+                playSound(150, 'sawtooth', 0.5);
+                let screen = document.querySelector('.code-screen');
+                let msg = document.getElementById('msg');
+                
+                msg.innerText = "CODICE ERRATO";
+                screen.classList.add('shake');
+                currentInput = "";
+                document.getElementById('code-display').innerText = "";
+
+                setTimeout(() => {
+                    screen.classList.remove('shake');
+                }, 500);
+            }
+        }
+
+        function gameOver(win) {
+            clearInterval(timerInterval);
+            isRunning = false;
+            
+            if (win) {
+                playSound(600, 'sine', 0.2); 
+                setTimeout(() => playSound(900, 'sine', 0.4), 200);
+                document.getElementById('end-good').style.display = 'flex';
+            } else {
+                playSound(100, 'sawtooth', 2);
+                document.getElementById('poison-container').style.height = "100%";
+                document.getElementById('end-bad').style.display = 'flex';
+            }
+        }
+
+        function playSound(freq, type, dur) {
+            if (!audioCtx) return;
+            try {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.value = 0.1;
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + dur);
+            } catch(e) {}
+        }
+    </script>
+</body>
+</html>
