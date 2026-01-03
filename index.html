@@ -31,75 +31,91 @@
             pointer-events: none;
         }
 
-        /* Animazione Onde */
         .parallax > use { animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite; }
         .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; fill: rgba(0, 255, 0, 0.7); }
         .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; fill: rgba(0, 100, 0, 0.5); }
         .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; fill: #004d00; }
         @keyframes move-forever { 0% { transform: translate3d(-90px,0,0); } 100% { transform: translate3d(85px,0,0); } }
 
-        /* --- TASTIERINO (DESIGN ARROTONDATO ORIZZONTALE) --- */
-        .panel {
-            position: relative; z-index: 100;
+        /* --- LAYOUT DI GIOCO (CONTENITORE PRINCIPALE) --- */
+        .game-wrapper {
+            position: relative;
+            z-index: 999; /* Sopra al veleno */
+            display: flex;
+            flex-direction: row; /* Affiancati orizzontalmente */
+            align-items: center;
+            justify-content: center;
+            gap: 60px; /* Spazio tra timer e pad */
+            padding: 20px;
+        }
+
+        /* --- BLOCCO TIMER ROTATO (SEPARATO) --- */
+        .rotated-timer-box {
+            background: #000;
+            border-radius: 30px;
+            border: 6px solid #444;
+            padding: 30px;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 
+                0 0 50px rgba(0,0,0,0.9), 
+                inset 0 0 30px #000;
+            
+            /* LA ROTAZIONE CHIESTA */
+            transform: rotate(50deg);
+        }
+
+        #timer {
+            font-size: 5.5rem; /* Un po' più grande per impatto */
+            color: #ff3333; font-weight: bold;
+            text-shadow: 0 0 20px #ff0000; margin: 0;
+            /* Se vuoi che i numeri siano dritti nonostante il box storto, togli il commento sotto: */
+            /* transform: rotate(-50deg); */ 
+        }
+
+        /* --- TASTIERINO (PANNELLO DESTRO) --- */
+        .keypad-panel {
             background: #1a1a1a;
-            width: 650px; height: 320px;
-            border-radius: 50px; /* Molto arrotondato */
+            width: 350px; /* Più stretto ora che è solo */
+            border-radius: 50px;
             border: 6px solid #444;
             box-shadow: 0 0 80px rgba(0,0,0,1);
-            display: flex; flex-direction: row; align-items: center; justify-content: space-between;
-            padding: 30px; gap: 30px;
-        }
-
-        /* SINISTRA: TIMER */
-        .left-box {
-            flex: 1; height: 100%;
-            background: #000; border-radius: 30px;
-            border: 4px inset #333;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: inset 0 0 30px #000;
-        }
-        #timer {
-            font-size: 4.5rem; color: #ff3333; font-weight: bold;
-            text-shadow: 0 0 20px #ff0000; margin: 0;
-        }
-
-        /* DESTRA: CODICE E TASTI */
-        .right-box {
-            flex: 1.2; height: 100%;
-            display: flex; flex-direction: column; gap: 15px;
+            display: flex; flex-direction: column;
+            padding: 30px; gap: 25px;
         }
 
         .code-screen {
             background: #051a05; border: 2px inset #555; border-radius: 15px;
-            height: 60px; width: 100%;
+            height: 70px; width: 100%;
             display: flex; justify-content: center; align-items: center;
         }
         #code-display {
-            font-size: 2rem; color: #33ff33; letter-spacing: 6px;
+            font-size: 2.2rem; color: #33ff33; letter-spacing: 6px;
             text-shadow: 0 0 5px #0f0; font-weight: bold;
         }
 
-        .keypad {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-            flex-grow: 1;
+        .keypad-grid {
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 15px;
+            justify-items: center;
         }
 
         button {
-            border-radius: 50%; /* Cerchi perfetti */
+            width: 70px; height: 70px; border-radius: 50%;
             background: linear-gradient(145deg, #444, #333);
             border: 2px solid #555; color: white;
-            font-size: 1.5rem; font-weight: bold; cursor: pointer;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.5);
-            transition: transform 0.1s;
+            font-size: 1.8rem; font-weight: bold; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
             display: flex; justify-content: center; align-items: center;
+            font-family: inherit; transition: transform 0.1s;
         }
-        button:active { transform: scale(0.95); background: #222; }
+        button:active { transform: scale(0.95); background: #222; box-shadow: 0 2px 5px rgba(0,0,0,0.8); }
 
         .btn-c { background: linear-gradient(145deg, #d4a017, #b8860b); color: #000; border-color: #8b6508; }
         .btn-ok { background: linear-gradient(145deg, #2e8b57, #1e5b39); border-color: #1e5b39; }
 
         /* MESSAGGI E OVERLAYS */
-        #msg { text-align: center; height: 20px; font-weight: bold; color: #ff4444; margin-top: -5px; }
+        #msg { text-align: center; height: 20px; font-weight: bold; color: #ff4444; margin-top: -10px; }
 
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -117,12 +133,15 @@
         .shake { animation: shake 0.4s; background: #500 !important; color: white !important; }
         @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
 
-        /* MEDIA QUERY PER CELLULARI (così non si rompe se lo apri da telefono) */
-        @media (max-width: 700px) {
-            .panel { flex-direction: column; width: 90%; height: auto; border-radius: 30px; }
-            .left-box { width: 100%; height: 120px; margin-bottom: 20px; }
-            .keypad { gap: 8px; }
-            button { width: 50px; height: 50px; font-size: 1.2rem; margin: 0 auto;}
+        /* MEDIA QUERY PER CELLULARI */
+        /* IMPORTANTE: Su schermi piccoli, la rotazione 50deg occupa troppo spazio e rompe tutto.
+           Su cellulare li impiliamo verticalmente e togliamo la rotazione per usabilità. */
+        @media (max-width: 900px) {
+            .game-wrapper { flex-direction: column; gap: 30px; }
+            .rotated-timer-box { transform: rotate(0deg); /* Raddrizza su mobile */ padding: 15px; }
+            #timer { font-size: 4rem; }
+            .keypad-panel { width: 90%; max-width: 350px; padding: 20px; gap: 15px; }
+            button { width: 60px; height: 60px; font-size: 1.5rem; }
         }
     </style>
 </head>
@@ -145,16 +164,18 @@
         <button class="btn-big" onclick="forceStart()">AVVIA</button>
     </div>
 
-    <div class="panel">
-        <div class="left-box">
+    <div class="game-wrapper">
+        
+        <div class="rotated-timer-box">
             <div id="timer">15:00</div>
         </div>
-        <div class="right-box">
+
+        <div class="keypad-panel">
             <div class="code-screen">
                 <div id="code-display"></div>
             </div>
             <div id="msg"></div>
-            <div class="keypad">
+            <div class="keypad-grid">
                 <button onclick="press(1)">1</button>
                 <button onclick="press(2)">2</button>
                 <button onclick="press(3)">3</button>
@@ -169,6 +190,7 @@
                 <button class="btn-ok" onclick="check()">OK</button>
             </div>
         </div>
+
     </div>
 
     <div id="end-bad" class="overlay" style="display: none; background:#800;">
@@ -189,20 +211,12 @@
         let timerInterval;
         let audioCtx;
 
-        // FUNZIONE AVVIO BLINDATA
         function forceStart() {
-            // 1. Nascondi subito l'overlay
             document.getElementById('start-overlay').style.display = 'none';
-            
-            // 2. Prova Audio (ma se fallisce, chissene)
             try {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 audioCtx.resume();
-            } catch(e) {
-                console.log("Audio non disponibile, ma il gioco parte lo stesso.");
-            }
-
-            // 3. Avvia Timer
+            } catch(e) {}
             if (!isRunning) {
                 isRunning = true;
                 timerInterval = setInterval(gameLoop, 1000);
@@ -219,26 +233,22 @@
         }
 
         function updateDisplay() {
-            // Timer Formattato
             let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
             let s = (timeLeft % 60).toString().padStart(2, '0');
             let tEl = document.getElementById('timer');
             tEl.innerText = m + ":" + s;
 
-            // Veleno (calcolo inverso: parte da 0 e arriva a 100)
             let totalSeconds = TOTAL_MINUTES * 60;
             let percent = ((totalSeconds - timeLeft) / totalSeconds) * 100;
             document.getElementById('poison-container').style.height = percent + "%";
 
-            // Effetto Panico (Rosso)
             if (timeLeft < 60) {
-                let box = document.querySelector('.left-box');
+                // Nota: Ora il background rosso va su .rotated-timer-box
+                let box = document.querySelector('.rotated-timer-box');
                 if (timeLeft % 2 === 0) {
-                    box.style.background = "#ff3333";
-                    tEl.style.color = "black";
+                    box.style.background = "#ff3333"; tEl.style.color = "black";
                 } else {
-                    box.style.background = "black";
-                    tEl.style.color = "#ff3333";
+                    box.style.background = "black"; tEl.style.color = "#ff3333";
                     if (timeLeft < 10) playSound(800, 'square', 0.1);
                 }
             }
@@ -264,30 +274,23 @@
 
         function check() {
             if (!isRunning) return;
-            
             if (currentInput === CODE) {
                 gameOver(true);
             } else {
-                // Errore
                 playSound(150, 'sawtooth', 0.5);
                 let screen = document.querySelector('.code-screen');
                 let msg = document.getElementById('msg');
-                
                 msg.innerText = "CODICE ERRATO";
                 screen.classList.add('shake');
                 currentInput = "";
                 document.getElementById('code-display').innerText = "";
-
-                setTimeout(() => {
-                    screen.classList.remove('shake');
-                }, 500);
+                setTimeout(() => { screen.classList.remove('shake'); }, 500);
             }
         }
 
         function gameOver(win) {
             clearInterval(timerInterval);
             isRunning = false;
-            
             if (win) {
                 playSound(600, 'sine', 0.2); 
                 setTimeout(() => playSound(900, 'sine', 0.4), 200);
@@ -304,13 +307,10 @@
             try {
                 let osc = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
-                osc.type = type;
-                osc.frequency.value = freq;
+                osc.type = type; osc.frequency.value = freq;
                 gain.gain.value = 0.1;
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + dur);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + dur);
             } catch(e) {}
         }
     </script>
