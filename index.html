@@ -17,7 +17,7 @@
             position: relative;
         }
 
-        /* --- IL VELENO (SOTTOFONDO - NON TOCCATO) --- */
+        /* --- VELENO (SFONDO) --- */
         #poison-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 0%;
             background: linear-gradient(180deg, #001a00 0%, #004d00 100%);
@@ -27,8 +27,7 @@
 
         .waves-box {
             position: absolute; bottom: -50px; width: 100%; height: 50px;
-            z-index: 2; transform: rotate(180deg);
-            pointer-events: none;
+            z-index: 2; transform: rotate(180deg); pointer-events: none;
         }
 
         .parallax > use { animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite; }
@@ -37,7 +36,7 @@
         .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; fill: #004d00; }
         @keyframes move-forever { 0% { transform: translate3d(-90px,0,0); } 100% { transform: translate3d(85px,0,0); } }
 
-        /* --- CONTENITORE DISPOSITIVO UNITO --- */
+        /* --- DISPOSITIVO UNITO --- */
         .device-wrapper {
             position: relative; z-index: 100;
             display: flex;
@@ -46,38 +45,36 @@
             border-radius: 15px;
             overflow: hidden; /* Taglia gli angoli interni */
             border: 6px solid #444;
+            background-color: #1a1a1a;
         }
 
         /* --- SEZIONE TIMER (SINISTRA, 90 GRADI) --- */
         .timer-section {
             background-color: #000;
-            width: 140px; /* Larghezza della colonna timer */
+            width: 160px; /* Larghezza colonna timer */
             display: flex;
             align-items: center;
             justify-content: center;
-            border-right: 4px solid #333; /* Linea di separazione */
+            border-right: 4px solid #333;
             box-shadow: inset -10px 0 20px rgba(0,0,0,0.8);
         }
 
         #timer {
             font-family: Arial, Helvetica, sans-serif; /* Font richiesto */
-            font-size: 6rem;
+            font-size: 6.5rem; /* Dimensione Font */
             color: #ff3333;
             font-weight: 900;
             margin: 0;
             white-space: nowrap;
             text-shadow: 0 0 20px #ff0000;
-            
-            /* ROTAZIONE 90 GRADI E ALLUNGAMENTO */
-            /* Rotate -90deg per leggere dal basso verso l'alto (standard design) */
-            /* ScaleY(1.5) allunga il font */
-            transform: rotate(-90deg) scaleY(1.8); 
+            /* Ruotato e Allungato */
+            transform: rotate(-90deg) scaleY(1.6); 
         }
 
         /* --- SEZIONE PAD (DESTRA) --- */
         .pad-section {
             background-color: #1a1a1a;
-            width: 380px;
+            width: 400px;
             padding: 30px;
             display: flex;
             flex-direction: column;
@@ -110,48 +107,43 @@
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 12px;
         }
 
         button {
-            /* RETTANGOLARI */
+            /* TASTI RETTANGOLARI */
             width: 100%;
-            height: 70px;
-            border-radius: 8px; /* Angoli leggermente smussati ma rettangolari */
-            
+            height: 75px;
+            border-radius: 6px;
             background: linear-gradient(180deg, #444, #333);
             border: 1px solid #666;
-            border-bottom: 4px solid #222; /* Effetto 3D premibile */
+            border-bottom: 5px solid #222; /* Effetto 3D */
             color: white;
             font-size: 1.8rem;
             font-weight: bold;
             cursor: pointer;
             font-family: Arial, sans-serif;
-            transition: all 0.1s;
+            transition: all 0.05s;
         }
 
         button:active {
-            transform: translateY(3px);
+            transform: translateY(4px);
             border-bottom: 1px solid #222;
             background: #222;
         }
 
         .btn-c { 
             background: linear-gradient(180deg, #d4a017, #b8860b); 
-            color: #000; 
-            border-color: #8b6508;
-            border-bottom-color: #584004;
+            color: #000; border-color: #8b6508; border-bottom-color: #584004;
         }
         .btn-ok { 
             background: linear-gradient(180deg, #2e8b57, #1e5b39); 
-            border-color: #1e5b39;
-            border-bottom-color: #0f2e1c;
+            border-color: #1e5b39; border-bottom-color: #0f2e1c;
         }
 
-        /* MESSAGGI */
-        #msg { text-align: center; height: 20px; font-weight: bold; color: #ff4444; margin-top: -10px; font-family: 'Courier New', Courier, monospace;}
+        /* MESSAGGI E OVERLAYS */
+        #msg { text-align: center; height: 20px; font-weight: bold; color: #ff4444; margin-top: -10px; font-family: monospace;}
 
-        /* OVERLAYS */
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.98); z-index: 10000;
@@ -167,15 +159,14 @@
         .shake { animation: shake 0.4s; background: #500 !important; color: white !important; }
         @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
 
-        /* MOBILE FIX */
-        @media (max-width: 700px) {
-            .device-wrapper { flex-direction: column; width: 90%; }
-            .timer-section { width: 100%; height: 100px; border-right: none; border-bottom: 4px solid #333; }
-            #timer { transform: rotate(0deg) scaleX(1.2); font-size: 4rem; } /* Timer dritto su mobile */
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 800px) {
+            .device-wrapper { flex-direction: column; width: 95%; max-width: 400px; }
+            .timer-section { width: 100%; height: 120px; border-right: none; border-bottom: 4px solid #333; }
+            #timer { transform: rotate(0deg) scaleX(1.5); font-size: 4rem; }
             .pad-section { width: 100%; padding: 20px; box-sizing: border-box;}
             button { height: 60px; font-size: 1.5rem; }
         }
-
     </style>
 </head>
 <body>
@@ -193,4 +184,166 @@
 
     <div id="start-overlay" class="overlay">
         <h1 style="color:#0f0; font-size:3rem; margin-bottom: 10px;">SISTEMA PRONTO</h1>
-        <div style="color:#888;">Toccare per inizial
+        <div style="color:#888;">Toccare per inizializzare</div>
+        <button class="btn-big" onclick="forceStart()">AVVIA</button>
+    </div>
+
+    <div class="device-wrapper">
+        
+        <div class="timer-section">
+            <div id="timer">15:00</div>
+        </div>
+
+        <div class="pad-section">
+            <div class="code-screen">
+                <div id="code-display"></div>
+            </div>
+            <div id="msg"></div>
+            
+            <div class="keypad">
+                <button onclick="press(1)">1</button>
+                <button onclick="press(2)">2</button>
+                <button onclick="press(3)">3</button>
+                <button onclick="press(4)">4</button>
+                <button onclick="press(5)">5</button>
+                <button onclick="press(6)">6</button>
+                <button onclick="press(7)">7</button>
+                <button onclick="press(8)">8</button>
+                <button onclick="press(9)">9</button>
+                <button class="btn-c" onclick="wipe()">C</button>
+                <button onclick="press(0)">0</button>
+                <button class="btn-ok" onclick="check()">OK</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="end-bad" class="overlay" style="display: none; background:#800;">
+        <h1 style="font-size:3.5rem;">CONTAMINAZIONE</h1>
+        <h2>CHIARA È MORTA</h2>
+    </div>
+    <div id="end-good" class="overlay" style="display: none; background:#060;">
+        <h1 style="font-size:3.5rem;">SISTEMA SICURO</h1>
+        <h2>DISINNESCATO</h2>
+    </div>
+
+    <script>
+        const CODE = "34542424";
+        const TOTAL_MINUTES = 15;
+        let timeLeft = TOTAL_MINUTES * 60;
+        let currentInput = "";
+        let isRunning = false;
+        let timerInterval;
+        let audioCtx;
+
+        function forceStart() {
+            // 1. PRIMA COSA: Rimuovi l'overlay visivamente
+            document.getElementById('start-overlay').style.display = 'none';
+
+            // 2. Poi prova a caricare l'audio (se fallisce non importa, il gioco continua)
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                audioCtx.resume();
+            } catch(e) {
+                console.log("Audio non disponibile, proseguo senza.");
+            }
+
+            // 3. Avvia il ciclo di gioco
+            if (!isRunning) {
+                isRunning = true;
+                timerInterval = setInterval(gameLoop, 1000);
+            }
+        }
+
+        function gameLoop() {
+            if (timeLeft > 0) {
+                timeLeft--;
+                updateDisplay();
+            } else {
+                gameOver(false);
+            }
+        }
+
+        function updateDisplay() {
+            let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            let s = (timeLeft % 60).toString().padStart(2, '0');
+            let tEl = document.getElementById('timer');
+            tEl.innerText = m + ":" + s;
+
+            let totalSeconds = TOTAL_MINUTES * 60;
+            let percent = ((totalSeconds - timeLeft) / totalSeconds) * 100;
+            document.getElementById('poison-container').style.height = percent + "%";
+
+            if (timeLeft < 60) {
+                let section = document.querySelector('.timer-section');
+                if (timeLeft % 2 === 0) {
+                    section.style.background = "#ff3333"; tEl.style.color = "black";
+                } else {
+                    section.style.background = "black"; tEl.style.color = "#ff3333";
+                    if (timeLeft < 10) playSound(800, 'square', 0.1);
+                }
+            }
+        }
+
+        function press(n) {
+            if (!isRunning) return;
+            playSound(600, 'square', 0.05);
+            if (currentInput.length < 12) {
+                currentInput += n;
+                document.getElementById('code-display').innerText = currentInput;
+            }
+        }
+
+        function wipe() {
+            if (!isRunning) return;
+            playSound(300, 'sawtooth', 0.1);
+            currentInput = "";
+            document.getElementById('code-display').innerText = "";
+            document.getElementById('msg').innerText = "";
+            document.querySelector('.code-screen').classList.remove('shake');
+        }
+
+        function check() {
+            if (!isRunning) return;
+            if (currentInput === CODE) {
+                gameOver(true);
+            } else {
+                playSound(150, 'sawtooth', 0.5);
+                let screen = document.querySelector('.code-screen');
+                let msg = document.getElementById('msg');
+                msg.innerText = "CODICE ERRATO";
+                screen.classList.add('shake');
+                currentInput = "";
+                document.getElementById('code-display').innerText = "";
+                setTimeout(() => { screen.classList.remove('shake'); }, 500);
+            }
+        }
+
+        function gameOver(win) {
+            clearInterval(timerInterval);
+            isRunning = false;
+            if (win) {
+                playSound(600, 'sine', 0.2); 
+                setTimeout(() => playSound(900, 'sine', 0.4), 200);
+                document.getElementById('end-good').style.display = 'flex';
+            } else {
+                playSound(100, 'sawtooth', 2);
+                document.getElementById('poison-container').style.height = "100%";
+                document.getElementById('end-bad').style.display = 'flex';
+            }
+        }
+
+        function playSound(freq, type, dur) {
+            if (!audioCtx) return;
+            try {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = type; osc.frequency.value = freq;
+                gain.gain.value = 0.1;
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + dur);
+            } catch(e) {}
+        }
+    </script>
+</body>
+</html>
