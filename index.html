@@ -8,7 +8,7 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #050505; /* Nero profondo */
+            background-color: #050505;
             color: white;
             font-family: 'Courier New', Courier, monospace;
             height: 100vh;
@@ -20,46 +20,44 @@
             align-items: center;
         }
 
-        /* --- IL VELENO (CONTENITORE) --- */
+        /* --- IL VELENO (NON TOCCATO) --- */
         #poison-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 0%; /* AUMENTA COL TEMPO */
+            height: 0%;
             background: linear-gradient(180deg, #001a00 0%, #004d00 100%);
             z-index: 1;
             transition: height 1s linear;
         }
 
-        /* --- LE ONDE (SVG) --- */
         .waves-box {
             position: absolute;
-            bottom: -50px; /* Sporge sotto il blocco verde */
+            bottom: -50px;
             width: 100%;
             height: 50px;
             z-index: 2;
             transform: rotate(180deg);
         }
 
-        /* Animazione onde parallasse */
         .parallax > use {
             animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite;
         }
         .parallax > use:nth-child(1) {
             animation-delay: -2s;
             animation-duration: 7s;
-            fill: rgba(0, 255, 0, 0.7); /* Onda chiarissima veloce */
+            fill: rgba(0, 255, 0, 0.7);
         }
         .parallax > use:nth-child(2) {
             animation-delay: -3s;
             animation-duration: 10s;
-            fill: rgba(0, 100, 0, 0.5); /* Onda media */
+            fill: rgba(0, 100, 0, 0.5);
         }
         .parallax > use:nth-child(3) {
             animation-delay: -4s;
             animation-duration: 13s;
-            fill: #004d00; /* Onda principale (stesso colore del fondo del veleno) */
+            fill: #004d00;
         }
 
         @keyframes move-forever {
@@ -67,70 +65,126 @@
             100% { transform: translate3d(85px,0,0); }
         }
 
-        /* --- IL TASTIERINO (SOLIDO E VISIBILE) --- */
+        /* --- IL TASTIERINO (LAYOUT MODIFICATO) --- */
         .panel {
             position: relative;
-            z-index: 999; /* Livello massimo */
+            z-index: 999;
             background: #1a1a1a;
-            padding: 25px;
-            border-radius: 10px;
-            border: 4px solid #333;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            width: 280px;
+            padding: 30px;
+            /* Angoli molto arrotondati */
+            border-radius: 40px; 
+            border: 4px solid #444;
+            box-shadow: 0 0 60px rgba(0,0,0,0.9);
+            
+            /* Layout Rettangolare Orizzontale */
+            width: 600px; 
             display: flex;
-            flex-direction: column;
-            gap: 5px;
+            flex-direction: row; /* Elementi affiancati */
+            align-items: center;
+            gap: 30px;
         }
 
-        .screen {
+        /* --- SEZIONE SINISTRA (TIMER) --- */
+        .left-section {
+            flex: 1;
             background: #000;
-            border: 2px solid #444;
-            border-radius: 5px;
-            padding: 10px;
-            text-align: center;
+            border: 4px inset #333;
+            border-radius: 20px;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 20px #000;
         }
 
         #timer {
-            font-size: 3rem;
+            font-size: 4rem; /* Timer gigante */
             color: #ff3333;
             font-weight: bold;
-            text-shadow: 0 0 10px #ff0000;
-            margin-bottom: 5px;
-              position: absolute;
+            text-shadow: 0 0 15px #ff0000;
+            margin: 0;
+        }
+
+        /* --- SEZIONE DESTRA (CODICE + TASTI) --- */
+        .right-section {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .code-screen {
+            background: #000;
+            border: 2px inset #555;
+            border-radius: 10px;
+            padding: 5px;
+            width: 100%;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
         }
 
         #code-display {
-            font-size: 1.5rem;
+            font-size: 2rem;
             color: #33ff33;
-            height: 30px;
-            letter-spacing: 5px;
+            letter-spacing: 8px;
+            text-shadow: 0 0 5px #0f0;
         }
 
+        /* GRIGLIA PULSANTI */
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 15px; /* Spazio tra i cerchi */
         }
 
+        /* PULSANTI TONDI */
         button {
-            background: #333;
-            border: 1px solid #555;
+            width: 60px;  /* Larghezza fissa */
+            height: 60px; /* Altezza uguale alla larghezza */
+            border-radius: 50%; /* CERCHIO PERFETTO */
+            
+            background: linear-gradient(145deg, #444, #333);
+            border: 2px solid #555;
             color: white;
-            font-size: 1.2rem;
-            padding: 15px 0;
-            border-radius: 5px;
+            font-size: 1.5rem;
+            font-weight: bold;
             cursor: pointer;
-            transition: background 0.1s;
+            box-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.1s;
         }
-        button:active { background: #555; transform: translateY(2px); }
+        
+        button:active { 
+            transform: scale(0.95);
+            background: #222;
+        }
 
-        .btn-c { background: #b38f00; color: black; font-weight: bold; }
-        .btn-ok { background: #006600; font-weight: bold; }
+        .btn-c { 
+            background: linear-gradient(145deg, #d4a017, #b8860b); 
+            color: black; 
+            border-color: #8b6508;
+        }
+        .btn-ok { 
+            background: linear-gradient(145deg, #2e8b57, #1e5b39); 
+            border-color: #1e5b39;
+        }
 
-        /* --- OVERLAY AVVIO/FINE --- */
+        /* Messaggi */
+        #msg {
+            text-align: center; height: 20px; font-weight: bold; font-size: 0.9rem; margin-top: -5px;
+            width: 100%;
+        }
+
+        /* --- OVERLAY --- */
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: rgba(0,0,0,0.98);
             z-index: 10000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             text-align: center;
@@ -143,9 +197,16 @@
             box-shadow: 0 0 20px #0f0; text-transform: uppercase;
         }
 
-        /* Animazione Errore */
-        .shake { animation: shake 0.4s; background: #500 !important; }
+        .shake { animation: shake 0.4s; background: #500 !important; color: white !important; border-radius: 10px; }
         @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
+
+        /* Adattamento Mobile (se serve) */
+        @media (max-width: 650px) {
+            .panel { flex-direction: column; width: 90%; border-radius: 20px; }
+            .left-section { width: 100%; height: 100px; }
+            #timer { font-size: 3rem; }
+            .right-section { width: 100%; }
+        }
 
     </style>
 </head>
@@ -166,146 +227,33 @@
     </div>
 
     <div id="start-view" class="overlay">
-        <h1 style="color:#0f0; font-size:3rem;">SYSTEM READY</h1>
-        <button class="btn-big" onclick="init()">AVVIA TIMER</button>
+        <h1 style="color:#0f0; font-size:3rem;">SISTEMA PRONTO</h1>
+        <div style="color:#ccc;">Attesa Input Utente...</div>
+        <button class="btn-big" onclick="init()">AVVIA</button>
     </div>
 
     <div class="panel">
-        <div class="screen">
-            <div id="timer">15:00</div>
-            <div id="code-display"></div>
-        </div>
-        <div id="msg" style="text-align:center; color:red; height:20px; font-weight:bold;"></div>
         
-        <div class="keypad">
-            <button onclick="tap(1)">1</button>
-            <button onclick="tap(2)">2</button>
-            <button onclick="tap(3)">3</button>
-            <button onclick="tap(4)">4</button>
-            <button onclick="tap(5)">5</button>
-            <button onclick="tap(6)">6</button>
-            <button onclick="tap(7)">7</button>
-            <button onclick="tap(8)">8</button>
-            <button onclick="tap(9)">9</button>
-            <button class="btn-c" onclick="wipe()">C</button>
-            <button onclick="tap(0)">0</button>
-            <button class="btn-ok" onclick="check()">OK</button>
+        <div class="left-section">
+            <div id="timer">15:00</div>
         </div>
-    </div>
 
-    <div id="end-bad" class="overlay hidden" style="background:#500;">
-        <h1 style="font-size:4rem;">VELENO RILASCIATO</h1>
-        <h2>CHIARA È MORTA</h2>
-    </div>
-    <div id="end-good" class="overlay hidden" style="background:#060;">
-        <h1 style="font-size:4rem;">DISINNESCATO</h1>
-        <h2>SISTEMA SICURO</h2>
-    </div>
-
-    <script>
-        const CODE = "34542424";
-        const MINS = 15;
-        let secs = MINS * 60;
-        let input = "";
-        let running = false;
-        let timerInt;
-        let audio;
-
-        function init() {
-            document.getElementById('start-view').classList.add('hidden');
-            try {
-                audio = new (window.AudioContext || window.webkitAudioContext)();
-                audio.resume();
-            } catch(e){}
-            running = true;
+        <div class="right-section">
+            <div class="code-screen">
+                <div id="code-display"></div>
+            </div>
+            <div id="msg"></div>
             
-            // Loop Timer
-            timerInt = setInterval(() => {
-                if(secs > 0) {
-                    secs--;
-                    draw();
-                } else {
-                    over(false);
-                }
-            }, 1000);
-        }
-
-        function draw() {
-            // Timer Testo
-            let m = Math.floor(secs / 60).toString().padStart(2,'0');
-            let s = (secs % 60).toString().padStart(2,'0');
-            document.getElementById('timer').innerText = m + ":" + s;
-
-            // Panico
-            if(secs < 60) {
-                let t = document.getElementById('timer');
-                t.style.color = (secs % 2 == 0) ? "black" : "red";
-                t.style.background = (secs % 2 == 0) ? "red" : "black";
-                if(secs < 10 && audio) beep(800, 'square', 0.05);
-            }
-
-            // Veleno Altezza
-            let pct = ((MINS * 60 - secs) / (MINS * 60)) * 100;
-            document.getElementById('poison-container').style.height = pct + "%";
-        }
-
-        function tap(n) {
-            if(!running) return;
-            beep(600, 'square', 0.05);
-            if(input.length < 12) {
-                input += n;
-                document.getElementById('code-display').innerText = input;
-            }
-        }
-
-        function wipe() {
-            if(!running) return;
-            beep(300, 'sawtooth', 0.1);
-            input = "";
-            document.getElementById('code-display').innerText = "";
-        }
-
-        function check() {
-            if(!running) return;
-            if(input === CODE) {
-                over(true);
-            } else {
-                beep(150, 'sawtooth', 0.5);
-                let d = document.getElementById('code-display');
-                d.innerText = "ERRATO";
-                d.classList.add('shake');
-                input = "";
-                setTimeout(() => {
-                    d.innerText = "";
-                    d.classList.remove('shake');
-                }, 500);
-            }
-        }
-
-        function over(win) {
-            clearInterval(timerInt);
-            running = false;
-            if(win) {
-                beep(600,'sine',0.2); setTimeout(()=>beep(900,'sine',0.4),150);
-                document.getElementById('end-good').classList.remove('hidden');
-            } else {
-                beep(100,'sawtooth',2);
-                document.getElementById('poison-container').style.height = "100%";
-                document.getElementById('end-bad').classList.remove('hidden');
-            }
-        }
-
-        function beep(f, t, d) {
-            if(!audio) return;
-            try {
-                let o = audio.createOscillator();
-                let g = audio.createGain();
-                o.type = t; o.frequency.value = f;
-                g.gain.value = 0.1;
-                o.connect(g); g.connect(audio.destination);
-                o.start(); o.stop(audio.currentTime + d);
-            } catch(e){}
-        }
-    </script>
-</body>
-</html>
+            <div class="keypad">
+                <button onclick="tap(1)">1</button>
+                <button onclick="tap(2)">2</button>
+                <button onclick="tap(3)">3</button>
+                <button onclick="tap(4)">4</button>
+                <button onclick="tap(5)">5</button>
+                <button onclick="tap(6)">6</button>
+                <button onclick="tap(7)">7</button>
+                <button onclick="tap(8)">8</button>
+                <button onclick="tap(9)">9</button>
+                <button class="btn-c" onclick="wipe()">C</button>
+                <button onclick="tap(0)">0</button>
+                <button class="btn-ok
