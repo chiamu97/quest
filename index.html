@@ -17,53 +17,26 @@
             position: relative;
         }
 
-       /* --- IL VELENO (CONTENITORE) --- */
+        /* --- VELENO (SFONDO) --- */
         #poison-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 0%; /* AUMENTA COL TEMPO */
+            position: absolute; top: 0; left: 0; width: 100%; height: 0%;
             background: linear-gradient(180deg, #001a00 0%, #004d00 100%);
             z-index: 1;
-            transition: height 1s linear;
+            /* QUESTA RIGA È MAGICA: rende il movimento fluido */
+            transition: height 1s linear; 
         }
 
-        /* --- LE ONDE (SVG) --- */
         .waves-box {
-            position: absolute;
-            bottom: -50px; /* Sporge sotto il blocco verde */
-            width: 100%;
-            height: 50px;
-            z-index: 2;
-   transform: rotate(180deg);
+            position: absolute; bottom: -50px; width: 100%; height: 50px;
+            z-index: 2; transform: rotate(180deg); pointer-events: none;
         }
 
-        /* Animazione onde parallasse */
-        .parallax > use {
-            animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite;
-        }
-        .parallax > use:nth-child(1) {
-            animation-delay: -2s;
-            animation-duration: 7s;
-            fill: rgba(0, 255, 0, 0.7); /* Onda chiarissima veloce */
-        }
-        .parallax > use:nth-child(2) {
-            animation-delay: -3s;
-            animation-duration: 10s;
-            fill: rgba(0, 100, 0, 0.5); /* Onda media */
-        }
-        .parallax > use:nth-child(3) {
-            animation-delay: -4s;
-            animation-duration: 13s;
-            fill: #004d00; /* Onda principale (stesso colore del fondo del veleno) */
-        }
+        .parallax > use { animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite; }
+        .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; fill: rgba(0, 255, 0, 0.7); }
+        .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; fill: rgba(0, 100, 0, 0.5); }
+        .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; fill: #004d00; }
+        @keyframes move-forever { 0% { transform: translate3d(-90px,0,0); } 100% { transform: translate3d(85px,0,0); } }
 
-        @keyframes move-forever {
-            0% { transform: translate3d(-90px,0,0); }
-            100% { transform: translate3d(85px,0,0); }
-        }
-        
         /* --- DISPOSITIVO UNITO --- */
         .device-wrapper {
             position: relative; z-index: 100;
@@ -265,113 +238,9 @@
         let audioCtx;
 
         function forceStart() {
-            // 1. PRIMA COSA: Rimuovi l'overlay visivamente
+            // 1. Rimuovi l'overlay
             document.getElementById('start-overlay').style.display = 'none';
 
-            // 2. Poi prova a caricare l'audio (se fallisce non importa, il gioco continua)
+            // 2. Audio (opzionale)
             try {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                audioCtx.resume();
-            } catch(e) {
-                console.log("Audio non disponibile, proseguo senza.");
-            }
-
-            // 3. Avvia il ciclo di gioco
-            if (!isRunning) {
-                isRunning = true;
-                timerInterval = setInterval(gameLoop, 1000);
-            }
-        }
-
-        function gameLoop() {
-            if (timeLeft > 0) {
-                timeLeft--;
-                updateDisplay();
-            } else {
-                gameOver(false);
-            }
-        }
-
-        function updateDisplay() {
-            let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-            let s = (timeLeft % 60).toString().padStart(2, '0');
-            let tEl = document.getElementById('timer');
-            tEl.innerText = m + ":" + s;
-
-            let totalSeconds = TOTAL_MINUTES * 60;
-            let percent = ((totalSeconds - timeLeft) / totalSeconds) * 100;
-            document.getElementById('poison-container').style.height = percent + "%";
-
-            if (timeLeft < 60) {
-                let section = document.querySelector('.timer-section');
-                if (timeLeft % 2 === 0) {
-                    section.style.background = "#ff3333"; tEl.style.color = "black";
-                } else {
-                    section.style.background = "black"; tEl.style.color = "#ff3333";
-                    if (timeLeft < 10) playSound(800, 'square', 0.1);
-                }
-            }
-        }
-
-        function press(n) {
-            if (!isRunning) return;
-            playSound(600, 'square', 0.05);
-            if (currentInput.length < 12) {
-                currentInput += n;
-                document.getElementById('code-display').innerText = currentInput;
-            }
-        }
-
-        function wipe() {
-            if (!isRunning) return;
-            playSound(300, 'sawtooth', 0.1);
-            currentInput = "";
-            document.getElementById('code-display').innerText = "";
-            document.getElementById('msg').innerText = "";
-            document.querySelector('.code-screen').classList.remove('shake');
-        }
-
-        function check() {
-            if (!isRunning) return;
-            if (currentInput === CODE) {
-                gameOver(true);
-            } else {
-                playSound(150, 'sawtooth', 0.5);
-                let screen = document.querySelector('.code-screen');
-                let msg = document.getElementById('msg');
-                msg.innerText = "CODICE ERRATO";
-                screen.classList.add('shake');
-                currentInput = "";
-                document.getElementById('code-display').innerText = "";
-                setTimeout(() => { screen.classList.remove('shake'); }, 500);
-            }
-        }
-
-        function gameOver(win) {
-            clearInterval(timerInterval);
-            isRunning = false;
-            if (win) {
-                playSound(600, 'sine', 0.2); 
-                setTimeout(() => playSound(900, 'sine', 0.4), 200);
-                document.getElementById('end-good').style.display = 'flex';
-            } else {
-                playSound(100, 'sawtooth', 2);
-                document.getElementById('poison-container').style.height = "100%";
-                document.getElementById('end-bad').style.display = 'flex';
-            }
-        }
-
-        function playSound(freq, type, dur) {
-            if (!audioCtx) return;
-            try {
-                let osc = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-                osc.type = type; osc.frequency.value = freq;
-                gain.gain.value = 0.1;
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + dur);
-            } catch(e) {}
-        }
-    </script>
-</body>
-</html>
+                audioCtx = new (window.AudioContext || window.webkitAudioContext
