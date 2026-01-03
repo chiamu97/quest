@@ -5,92 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Failure</title>
     <style>
-        /* --- RESET E BASI --- */
-        * { box-sizing: border-box; }
+        /* RESET E BASI */
         body {
             margin: 0; padding: 0;
-            background-color: #000; /* Nero sfondo */
+            background-color: #050505;
             color: white;
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
             height: 100vh; width: 100vw;
             overflow: hidden;
             display: flex; justify-content: center; align-items: center;
+            position: relative;
         }
 
-        /* --- LIVELLO 1: VELENO --- */
+        /* --- IL VELENO (CODICE ORIGINALE CHE FUNZIONAVA) --- */
         #poison-container {
-            position: absolute; bottom: 0; left: 0; width: 100%; 
-            height: 0%; /* Parte da 0 */
-            background: linear-gradient(to top, #004d00, #001a00);
-            z-index: 10;
-            transition: height 1s linear;
+            position: absolute; top: 0; left: 0; width: 100%; height: 0%;
+            background: linear-gradient(180deg, #001a00 0%, #004d00 100%);
+            z-index: 1; /* Sta sotto */
+            transition: height 1s linear; /* Movimento fluido */
         }
 
-        /* ONDE ORIGINALI (SVG) */
         .waves-box {
-            position: absolute; top: -50px;
-            width: 100%; height: 50px;
-            z-index: 11;
-            transform: rotate(180deg);
+            position: absolute; bottom: -50px; width: 100%; height: 50px;
+            z-index: 2; transform: rotate(180deg);
             pointer-events: none;
         }
+
         .parallax > use { animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite; }
         .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; fill: rgba(0, 255, 0, 0.7); }
         .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; fill: rgba(0, 100, 0, 0.5); }
         .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; fill: #004d00; }
         @keyframes move-forever { 0% { transform: translate3d(-90px,0,0); } 100% { transform: translate3d(85px,0,0); } }
 
-
-        /* --- LIVELLO 100: IL GIOCO --- */
+        /* --- IL DISPOSITIVO (CODICE NUOVO PER DESIGN) --- */
         .device-wrapper {
-            position: relative; 
-            z-index: 100; /* Sopra il veleno */
+            position: relative; z-index: 100; /* Sta SOPRA il veleno */
             display: flex;
-            background: #111;
-            border: 5px solid #555;
-            border-radius: 20px;
-            box-shadow: 0 0 50px black;
+            flex-direction: row;
+            box-shadow: 0 0 80px rgba(0,0,0,1);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 6px solid #444;
+            background-color: #1a1a1a;
         }
 
-        /* TIMER (Sinistra, Verticale) */
-        .timer-box {
-            width: 140px;
-            background: #000;
-            border-right: 4px solid #444;
+        /* TIMER (Ruotato e Arial allungato) */
+        .timer-section {
+            background-color: #000;
+            width: 150px;
             display: flex; align-items: center; justify-content: center;
-            overflow: hidden;
-            padding: 10px;
+            border-right: 4px solid #333;
+            box-shadow: inset -10px 0 20px rgba(0,0,0,0.8);
         }
+
         #timer {
-            color: #ff0000;
-            font-size: 5rem; 
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 6rem;
+            color: #ff3333;
             font-weight: 900;
-            font-family: "Arial Narrow", Arial, sans-serif;
-            transform: rotate(-90deg) scaleY(1.5);
+            margin: 0;
             white-space: nowrap;
-            text-shadow: 0 0 10px red;
+            text-shadow: 0 0 20px #ff0000;
+            transform: rotate(-90deg) scaleY(1.5); 
             cursor: default;
         }
 
-        /* PAD (Destra) */
-        .pad-box {
-            padding: 25px;
+        /* PAD (Tasti rettangolari) */
+        .pad-section {
+            background-color: #1a1a1a;
             width: 380px;
-            display: flex; flex-direction: column; gap: 15px;
+            padding: 30px;
+            display: flex; flex-direction: column; gap: 20px;
         }
 
-        .screen {
+        .code-screen {
             background: #051a05;
-            border: 2px inset #555;
-            height: 60px;
+            border: 3px inset #555;
+            border-radius: 5px;
+            height: 70px;
             display: flex; justify-content: center; align-items: center;
-            margin-bottom: 5px;
+            box-shadow: inset 0 0 15px #000;
         }
+
         #code-display {
             font-family: 'Courier New', Courier, monospace;
-            color: #00ff00;
-            font-size: 2rem;
-            letter-spacing: 5px;
+            font-size: 2.5rem;
+            color: #33ff33;
+            letter-spacing: 8px;
+            text-shadow: 0 0 5px #0f0;
             font-weight: bold;
         }
 
@@ -101,55 +103,218 @@
         }
 
         button {
-            height: 65px;
             width: 100%;
-            background: linear-gradient(#444, #222);
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
+            height: 70px;
+            border-radius: 6px; /* Rettangolari smussati */
+            background: linear-gradient(180deg, #444, #333);
             border: 1px solid #666;
-            border-radius: 5px;
+            border-bottom: 5px solid #222;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 0 #000;
+            font-family: Arial, sans-serif;
         }
-        button:active { transform: translateY(4px); box-shadow: none; }
+        button:active { transform: translateY(4px); border-bottom: 1px solid #222; background: #222; }
 
-        .btn-c { background: linear-gradient(#d4a017, #8b6508); color: black; }
-        .btn-ok { background: linear-gradient(#2e8b57, #1e5b39); }
+        .btn-c { background: linear-gradient(180deg, #d4a017, #b8860b); color: #000; border-color: #8b6508; border-bottom-color: #584004; }
+        .btn-ok { background: linear-gradient(180deg, #2e8b57, #1e5b39); border-color: #1e5b39; border-bottom-color: #0f2e1c; }
 
-        /* --- LIVELLO 9999: OVERLAY (Schermate piene) --- */
+        /* MESSAGGI */
+        #msg { text-align: center; height: 20px; font-weight: bold; color: #ff4444; margin-top: -10px; }
+
+        /* OVERLAY DI AVVIO */
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 9999; /* Sopra a tutto */
+            background: rgba(0,0,0,0.98); z-index: 9999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            color: white; text-align: center;
+            text-align: center;
         }
         
-        .btn-start {
-            padding: 20px 50px; font-size: 2rem;
-            background: #00ff00; border: none; font-weight: bold;
-            cursor: pointer; margin-top: 20px; border-radius: 10px;
-            box-shadow: 0 0 20px #00ff00;
-            z-index: 10000; /* Assicura che sia cliccabile */
+        .btn-big {
+            padding: 25px 60px; font-size: 2rem; background: #0f0; border: none; border-radius: 5px;
+            cursor: pointer; font-weight: bold; margin-top: 30px; text-transform: uppercase;
+            box-shadow: 0 0 30px #0f0; font-family: inherit; z-index: 10000;
         }
 
-        /* UTILITY */
         .hidden { display: none !important; }
-        .shake { animation: shake 0.4s; background: #500 !important; }
+        .shake { animation: shake 0.4s; background: #500 !important; color: white !important; }
         @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
 
-        /* MOBILE */
-        @media (max-width: 600px) {
-            .device-wrapper { flex-direction: column; width: 95%; }
-            .timer-box { width: 100%; height: 100px; border-right: none; border-bottom: 4px solid #444; }
-            #timer { transform: rotate(0deg) scaleX(1.5); font-size: 4rem; }
-            .pad-box { width: 100%; }
-        }
     </style>
 </head>
 <body>
 
     <div id="poison-container">
         <svg class="waves-box" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
-            <defs><path id="gentle-wave" d="M-16
+            <defs><path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58-18 88-18 58 18 88 18 v44h-352z" /></defs>
+            <g class="parallax">
+                <use xlink:href="#gentle-wave" x="48" y="0" />
+                <use xlink:href="#gentle-wave" x="48" y="3" />
+                <use xlink:href="#gentle-wave" x="48" y="5" />
+            </g>
+        </svg>
+    </div>
+
+    <div id="start-overlay" class="overlay">
+        <h1 style="color:#0f0; font-size:3rem; margin-bottom: 10px;">SISTEMA PRONTO</h1>
+        <div style="color:#888;">Clicca per inizializzare</div>
+        <button class="btn-big" onclick="startGame()">AVVIA</button>
+    </div>
+
+    <div class="device-wrapper">
+        <div class="timer-section">
+            <div id="timer">15:00</div>
+        </div>
+        <div class="pad-section">
+            <div class="code-screen">
+                <div id="code-display"></div>
+            </div>
+            <div id="msg"></div>
+            <div class="keypad">
+                <button onclick="press(1)">1</button>
+                <button onclick="press(2)">2</button>
+                <button onclick="press(3)">3</button>
+                <button onclick="press(4)">4</button>
+                <button onclick="press(5)">5</button>
+                <button onclick="press(6)">6</button>
+                <button onclick="press(7)">7</button>
+                <button onclick="press(8)">8</button>
+                <button onclick="press(9)">9</button>
+                <button class="btn-c" onclick="wipe()">C</button>
+                <button onclick="press(0)">0</button>
+                <button class="btn-ok" onclick="check()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="end-bad" class="overlay hidden" style="background:#800;">
+        <h1>CONTAMINAZIONE COMPLETA</h1>
+        <h2>CHIARA È MORTA</h2>
+    </div>
+    <div id="end-good" class="overlay hidden" style="background:#060;">
+        <h1>SISTEMA DISINNESCATO</h1>
+        <h2>OTTIMO LAVORO</h2>
+    </div>
+
+    <script>
+        const CODE = "34542424";
+        const TOTAL_MINUTES = 15;
+        let timeLeft = TOTAL_MINUTES * 60;
+        let currentInput = "";
+        let isRunning = false;
+        let timerInterval;
+        let audioCtx;
+
+        function startGame() {
+            // 1. VIA LA SCHERMATA
+            document.getElementById('start-overlay').classList.add('hidden');
+
+            // 2. AVVIA TIMER
+            if (!isRunning) {
+                isRunning = true;
+                timerInterval = setInterval(gameLoop, 1000);
+            }
+
+            // 3. PROVA AUDIO (Se fallisce non importa)
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                audioCtx.resume();
+            } catch(e) { console.log("Audio error"); }
+        }
+
+        function gameLoop() {
+            if (timeLeft > 0) {
+                timeLeft--;
+                updateDisplay();
+            } else {
+                gameOver(false);
+            }
+        }
+
+        function updateDisplay() {
+            // Timer
+            let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            let s = (timeLeft % 60).toString().padStart(2, '0');
+            let tEl = document.getElementById('timer');
+            tEl.innerText = m + ":" + s;
+
+            // Veleno (Fluido grazie al CSS)
+            let totalSeconds = TOTAL_MINUTES * 60;
+            let percent = ((totalSeconds - timeLeft) / totalSeconds) * 100;
+            document.getElementById('poison-container').style.height = percent + "%";
+
+            // Panico
+            if (timeLeft < 60) {
+                let section = document.querySelector('.timer-section');
+                if (timeLeft % 2 === 0) {
+                    section.style.background = "#ff3333"; tEl.style.color = "black";
+                } else {
+                    section.style.background = "black"; tEl.style.color = "#ff3333";
+                    if (timeLeft < 10) playSound(800, 'square', 0.1);
+                }
+            }
+        }
+
+        function press(n) {
+            if (!isRunning) return;
+            playSound(600, 'square', 0.05);
+            if (currentInput.length < 12) {
+                currentInput += n;
+                document.getElementById('code-display').innerText = currentInput;
+            }
+        }
+
+        function wipe() {
+            if (!isRunning) return;
+            playSound(300, 'sawtooth', 0.1);
+            currentInput = "";
+            document.getElementById('code-display').innerText = "";
+            document.getElementById('msg').innerText = "";
+            document.querySelector('.code-screen').classList.remove('shake');
+        }
+
+        function check() {
+            if (!isRunning) return;
+            if (currentInput === CODE) {
+                gameOver(true);
+            } else {
+                playSound(150, 'sawtooth', 0.5);
+                let screen = document.querySelector('.code-screen');
+                let msg = document.getElementById('msg');
+                msg.innerText = "CODICE ERRATO";
+                screen.classList.add('shake');
+                currentInput = "";
+                document.getElementById('code-display').innerText = "";
+                setTimeout(() => { screen.classList.remove('shake'); }, 500);
+            }
+        }
+
+        function gameOver(win) {
+            clearInterval(timerInterval);
+            isRunning = false;
+            if (win) {
+                playSound(600, 'sine', 0.2); 
+                setTimeout(() => playSound(900, 'sine', 0.4), 200);
+                document.getElementById('end-good').classList.remove('hidden');
+            } else {
+                playSound(100, 'sawtooth', 2);
+                document.getElementById('poison-container').style.height = "100%";
+                document.getElementById('end-bad').classList.remove('hidden');
+            }
+        }
+
+        function playSound(freq, type, dur) {
+            if (!audioCtx) return;
+            try {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = type; osc.frequency.value = freq;
+                gain.gain.value = 0.1;
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + dur);
+            } catch(e) {}
+        }
+    </script>
+</body>
+</html>
